@@ -1,16 +1,12 @@
 import { Outlet } from "react-router-dom";
-import Header from "../components/Header";
-import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 
 export default function Root() {
   return (
-    <div className="flex flex-col ">
-      <Header />
-      <div className="flex flex-row">
-        <Navbar />
-        <div className="mx-8">
-          <Outlet />
-        </div>
+    <div className="flex">
+      <Sidebar />
+      <div className="p-4 flex-1 h-screen">
+        <Outlet />
       </div>
     </div>
   );

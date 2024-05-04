@@ -1,20 +1,26 @@
 import { Link } from "react-router-dom";
 
+import { HiHome } from "react-icons/hi";
+import { IoChatbox } from "react-icons/io5";
+import { IoPerson } from "react-icons/io5";
 const Navbar = () => {
   return (
-    <nav className="w-12 bg-purple-600">
-      <ul className="flex flex-col gap-8 jusitfy-center items-center">
-        <li className="h-8">
-          <Link to={"/"}>Home</Link>
+    <nav>
+      <ul className="flex flex-col gap-10 jusitfy-center items-center">
+        <li>
+          <Link to={"/"}>
+            <HiHome size={24} color="gray" />
+          </Link>
         </li>
-        <li className="h-8">
-          <Link to={"/login"}>Login</Link>
+        <li>
+          <Link to={"/chat"}>
+            <IoChatbox size={20} color="gray" />
+          </Link>
         </li>
-        <li className="h-8">
-          <Link to={"/profile"}>Profile</Link>
-        </li>
-        <li className="h-8">
-          <Link to={"/chat"}>Chat</Link>
+        <li>
+          <Link to={"/profile"}>
+            <IoPerson size={20} color="gray" />
+          </Link>
         </li>
       </ul>
     </nav>
