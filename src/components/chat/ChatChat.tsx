@@ -55,22 +55,27 @@ const ChatChat = () => {
       <div>
         <h2 className="text-2xl mb-4">Chat</h2>
       </div>
-      <div className="flex flex-col gap-4 overflow-y-auto">
-        {chats.map((v, i) => (
-          <div key={i} className="flex gap-2">
-            <img src={v.profile} className="w-12 h-12 rounded-full" />
-            <div className="flex-1">
-              <div className="flex justify-between">
-                <p>{v.name}</p>
-                <p className="text-gray-300 text-sm">{v.time}</p>
-              </div>
-              <div className="bg-gray-100 rounded-xl p-4">
-                <p>{v.message}</p>
+      <div className="relative overflow-y-auto">
+        <div className="sticky top-0 bg-gradient-to-b from-white to-transparent h-2 w-full"></div>
+        <div className="flex flex-col gap-4 overflow-y-auto">
+          {chats.map((v, i) => (
+            <div key={i} className="flex gap-2">
+              <img src={v.profile} className="w-12 h-12 rounded-full" />
+              <div className="flex-1">
+                <div className="flex justify-between">
+                  <p>{v.name}</p>
+                  <p className="text-gray-300 text-sm">{v.time}</p>
+                </div>
+                <div className="bg-gray-100 rounded-xl p-4">
+                  <p>{v.message}</p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+        <div className="sticky bottom-0 bg-gradient-to-t from-white to-transparent h-2 w-full"></div>
       </div>
+
       <div className="mt-2">
         <input
           type="text"

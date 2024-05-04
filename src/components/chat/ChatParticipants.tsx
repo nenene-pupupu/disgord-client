@@ -30,26 +30,34 @@ const ChatParticipants = () => {
   ];
   return (
     <div className="mt-4">
-      <h2 className="text-2xl mb-4">Participants</h2>
-      <div className="flex flex-col gap-2 h-36 overflow-y-scroll">
-        {clients.map((v, i) => (
-          <div
-            key={i}
-            className={
-              "flex justify-center items-center w-full h-12 rounded-full gap-2 p-2 " +
-              (i == 0 ? "bg-gray-100" : "")
-            }
-          >
-            <div>
-              <img src={v.profile} className="w-8 h-8 rounded-full" />
-            </div>
-            <div className="flex-1">
-              <p>{v.name}</p>
-            </div>
-            <IoMic color="gray" className="cursor-pointer" />
-            <IoVideocam color="gray" className="cursor-pointer" />
+      <h2 className="text-2xl mb-2">Participants</h2>
+
+      <div className="relative h-40 overflow-y-scroll">
+        <div className="sticky top-0 bg-gradient-to-b from-white to-transparent h-2 w-full"></div>
+        <div className="">
+          <div className="flex flex-col gap-2">
+            {clients.map((v, i) => (
+              <div
+                key={i}
+                className={
+                  "flex justify-center items-center w-full h-12 rounded-full gap-2 p-2 " +
+                  (i == 0 ? "bg-gray-100" : "")
+                }
+              >
+                <div>
+                  <img src={v.profile} className="w-8 h-8 rounded-full" />
+                </div>
+                <div className="flex-1">
+                  <p>{v.name}</p>
+                </div>
+                <IoMic color="gray" className="cursor-pointer" />
+                <IoVideocam color="gray" className="cursor-pointer" />
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+
+        <div className="sticky bottom-0 bg-gradient-to-t from-white to-transparent h-2 w-full"></div>
       </div>
     </div>
   );
