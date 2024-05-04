@@ -40,7 +40,7 @@ const ChatParticipants = () => {
               <div
                 key={i}
                 className={
-                  "flex justify-center items-center w-full h-12 rounded-full gap-2 p-2 " +
+                  "flex items-center w-full h-12 rounded-full gap-2 p-2 pr-4 " +
                   (i == 0 ? "bg-gray-100" : "")
                 }
               >
