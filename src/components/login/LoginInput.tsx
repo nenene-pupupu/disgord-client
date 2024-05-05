@@ -1,8 +1,14 @@
+import { useState } from 'react';
 import Logo from '../../assets/images/disgord.png';
+import ForgotPassword from './ForgotPassword';
 
 const LoginInput = () => {
+    const [dialog, setDialog] = useState(false);
+
     return (
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 ">
+        <div>
+            <ForgotPassword open={dialog} setOpen={setDialog} />
+
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                     <img src={Logo} className="rounded-full mx-auto h-14 w-14" />
@@ -11,12 +17,11 @@ const LoginInput = () => {
                     Sign in to your account
                 </h2>
             </div>
-
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form className="space-y-6" action="#" method="POST">
                     <div>
                         <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                            Email address
+                            ID
                         </label>
                         <div className="mt-2">
                             <input
@@ -36,9 +41,13 @@ const LoginInput = () => {
                                     Password
                                 </label>
                                 <div className="text-sm">
-                                    <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                                    <button
+                                        // href="#"
+                                        onClick={() => setDialog(true)}
+                                        className="font-semibold text-indigo-600 hover:text-indigo-500"
+                                    >
                                         Forgot password?
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                             <div className="mt-2">
@@ -65,7 +74,7 @@ const LoginInput = () => {
 
                 <p className="mt-10 text-center text-sm text-gray-500">
                     Not a member?{' '}
-                    <a href="3" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                    <a href="/register" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
                         Sign up
                     </a>
                 </p>
