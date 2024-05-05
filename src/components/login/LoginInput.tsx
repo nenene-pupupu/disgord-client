@@ -9,18 +9,14 @@ const LoginInput = () => {
         <div>
             <ForgotPassword open={dialog} setOpen={setDialog} />
 
-            <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                    <img src={Logo} className="rounded-full mx-auto h-14 w-14" />
-                </div>
-                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                    Sign in to your account
-                </h2>
+            <div className="mx-auto w-full max-w-sm">
+                <img src={Logo} className="rounded-full mx-auto h-14 w-14" />
+                <h2 className="mt-8 text-center text-2xl font-bold text-gray-900">Sign in to your account</h2>
             </div>
-            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+            <div className="mt-8 mx-auto w-full max-w-sm">
                 <form className="space-y-6" action="#" method="POST">
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-900">
                             ID
                         </label>
                         <div className="mt-2">
@@ -29,7 +25,7 @@ const LoginInput = () => {
                                 name="id"
                                 type="text"
                                 required
-                                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-600 text-sm leading-6"
                             />
                         </div>
                     </div>
@@ -37,7 +33,7 @@ const LoginInput = () => {
                     <div>
                         <div>
                             <div className="flex item-center justify-between">
-                                <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-900">
                                     Password
                                 </label>
                                 <div className="text-sm">
@@ -56,7 +52,7 @@ const LoginInput = () => {
                                     name="password"
                                     type="password"
                                     required
-                                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                    className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-600 text-sm leading-6"
                                 />
                             </div>
                         </div>
