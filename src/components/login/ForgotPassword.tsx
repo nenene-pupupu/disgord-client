@@ -1,7 +1,10 @@
 import { Dialog } from '@headlessui/react';
 import { IoAlertCircleOutline } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
 
 const ForgotPassword = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) => {
+    const navigate = useNavigate();
+
     return (
         <Dialog className="relative z-10" open={open} onClose={() => setOpen(false)}>
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -25,6 +28,16 @@ const ForgotPassword = ({ open, setOpen }: { open: boolean; setOpen: (open: bool
                             </div>
                         </div>
                         <div className="bg-gray-100 px-6 py-3 flex flex-row-reverse ">
+                            <button
+                                type="button"
+                                className="justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 ml-3"
+                                onClick={() => {
+                                    setOpen(false);
+                                    navigate('/register');
+                                }}
+                            >
+                                Sign up
+                            </button>
                             <button
                                 type="button"
                                 className="justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
