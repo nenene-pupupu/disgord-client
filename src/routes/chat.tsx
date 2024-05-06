@@ -1,7 +1,7 @@
-import ChatChat from "../components/chat/ChatChat";
-import ChatLayout from "../components/chat/ChatLayout";
-import ChatParticipants from "../components/chat/ChatParticipants";
-import ChatRoomList from "../components/chat/ChatRoomList";
+import ChatChat from "@components/chat/ChatChat";
+import ChatLayout from "@components/chat/ChatLayout";
+import ChatParticipants from "@components/chat/ChatParticipants";
+import ChatRoomList from "@components/chat/ChatRoomList";
 
 export default function Chat() {
   return (

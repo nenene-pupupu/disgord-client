@@ -1,7 +1,7 @@
-import Logo from "../../assets/images/disgord.png";
+import Logo from "@/assets/images/disgord.png";
 import { IoExitOutline } from "react-icons/io5";
 import { IoAdd } from "react-icons/io5";
-import Tooltip from "../common/Tooltip";
+import Tooltip from "@components/common/Tooltip";
 
 const ChatRoomList = () => {
   const rooms = [

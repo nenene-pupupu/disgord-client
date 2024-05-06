@@ -1,9 +1,9 @@
-import LoginInput from '../components/login/LoginInput';
+import LoginInput from "@components/login/LoginInput";
 
 export default function Login() {
-    return (
-        <div className="flex min-h-full flex-1 flex-col px-6 py-12 ">
-            <LoginInput />
-        </div>
-    );
+  return (
+    <div className="flex min-h-full flex-1 flex-col px-6 py-12 ">
+      <LoginInput />
+    </div>
+  );
 }

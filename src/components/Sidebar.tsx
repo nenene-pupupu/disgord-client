@@ -1,4 +1,4 @@
-import Logo from "../assets/images/disgord.png";
+import Logo from "@/assets/images/disgord.png";
 import Navbar from "./Navbar";
 import { IoNotifications } from "react-icons/io5";
 import { IoSettings } from "react-icons/io5";
