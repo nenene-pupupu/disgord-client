@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { IconSky } from "@/assets/svg";
 import ForgotPassword from "./ForgotPassword";
+import { Link } from "react-router-dom";
 
 const LoginInput = () => {
   const [dialog, setDialog] = useState(false);
@@ -46,7 +47,6 @@ const LoginInput = () => {
                 </label>
                 <div className="text-sm">
                   <button
-                    // href="#"
                     onClick={() => setDialog(true)}
                     className="font-semibold text-sky-500 hover:text-sky-400"
                   >
@@ -78,12 +78,12 @@ const LoginInput = () => {
 
         <p className="mt-10 text-center text-sm text-gray-500">
           Not a member?{" "}
-          <a
-            href="/register"
+          <Link
+            to="/register"
             className="font-semibold leading-6 text-sky-500 hover:text-sky-400"
           >
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </div>

@@ -2,37 +2,43 @@ import { IconSky } from "@/assets/svg";
 import { IoExitOutline } from "react-icons/io5";
 import { IoAdd } from "react-icons/io5";
 import Tooltip from "@components/common/Tooltip";
+import { useState } from "react";
+import AddRoom from "./AddRoom";
+
+const rooms = [
+  {
+    id: 1,
+    icon: IconSky,
+    name: "room1",
+  },
+  {
+    id: 2,
+    icon: IconSky,
+    name: "room2",
+  },
+  {
+    id: 3,
+    icon: IconSky,
+    name: "room3",
+  },
+  {
+    id: 4,
+    icon: IconSky,
+    name: "room4",
+  },
+];
 
 const ChatRoomList = () => {
-  const rooms = [
-    {
-      id: 1,
-      icon: IconSky,
-      name: "room1",
-    },
-    {
-      id: 2,
-      icon: IconSky,
-      name: "room2",
-    },
-    {
-      id: 3,
-      icon: IconSky,
-      name: "room3",
-    },
-    {
-      id: 4,
-      icon: IconSky,
-      name: "room4",
-    },
-  ];
+  const [modal, setModal] = useState(false);
 
   return (
     <div>
+      <AddRoom open={modal} setOpen={setModal} />
+
       <div className="flex  mt-4">
         <h2 className="text-2xl flex-auto">Channels</h2>
         <Tooltip message="Add Room">
-          <button>
+          <button onClick={() => setModal(true)}>
             <IoAdd className="h-8 w-8 text-gray-400" />
           </button>
         </Tooltip>
