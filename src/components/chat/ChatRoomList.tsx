@@ -1,4 +1,4 @@
-import Logo from "@/assets/images/disgord.png";
+import { IconSky } from "@/assets/svg";
 import { IoExitOutline } from "react-icons/io5";
 import { IoAdd } from "react-icons/io5";
 import Tooltip from "@components/common/Tooltip";
@@ -8,22 +8,22 @@ import AddRoom from "./AddRoom";
 const rooms = [
   {
     id: 1,
-    icon: Logo,
+    icon: IconSky,
     name: "room1",
   },
   {
     id: 2,
-    icon: Logo,
+    icon: IconSky,
     name: "room2",
   },
   {
     id: 3,
-    icon: Logo,
+    icon: IconSky,
     name: "room3",
   },
   {
     id: 4,
-    icon: Logo,
+    icon: IconSky,
     name: "room4",
   },
 ];

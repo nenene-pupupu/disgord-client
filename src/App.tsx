@@ -1,10 +1,10 @@
-import Logo from "@/assets/images/disgord.png";
+import { IconSky } from "@/assets/svg";
 import { Link } from "react-router-dom";
 
 function App() {
   return (
     <div className="w-full h-full flex flex-col justify-center items-center gap-8">
-      <img src={Logo} className="w-24 h-24" />
+      <img src={IconSky} className="w-24 h-24" />
 
       <p className="font-bold text-7xl text-sky-400">DISGORD</p>
       <p className="font-medium text-2xl w-[65%] text-center">
