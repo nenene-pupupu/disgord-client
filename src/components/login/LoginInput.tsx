@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Logo from "@/assets/images/disgord.png";
+import { IconSky } from "@/assets/svg";
 import ForgotPassword from "./ForgotPassword";
 
 const LoginInput = () => {
@@ -10,7 +10,7 @@ const LoginInput = () => {
       <ForgotPassword open={dialog} setOpen={setDialog} />
 
       <div className="mx-auto w-full max-w-sm">
-        <img src={Logo} className="rounded-full mx-auto h-14 w-14" />
+        <img src={IconSky} className="rounded-full mx-auto h-14 w-14" />
         <h2 className="mt-8 text-center text-2xl font-bold text-gray-900">
           Sign in to your account
         </h2>
