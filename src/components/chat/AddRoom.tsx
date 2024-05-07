@@ -1,5 +1,4 @@
 import { Dialog } from "@headlessui/react";
-import { useNavigate } from "react-router-dom";
 
 const AddRoom = ({
   open,
@@ -8,8 +7,6 @@ const AddRoom = ({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) => {
-  const navigate = useNavigate();
-
   return (
     <Dialog
       className="relative z-10"

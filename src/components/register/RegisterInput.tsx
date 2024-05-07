@@ -33,26 +33,6 @@ const RegisterInput = () => {
           </div>
 
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-900"
-            >
-              ID
-              <span className="text-red-500">*</span>
-            </label>
-            <div className="mt-2">
-              <input
-                // id="id"
-                name="id"
-                type="text"
-                required
-                placeholder="Enter your ID"
-                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
-              />
-            </div>
-          </div>
-
-          <div>
             <div>
               <label
                 htmlFor="password"
