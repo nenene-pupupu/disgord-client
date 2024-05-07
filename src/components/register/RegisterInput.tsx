@@ -1,4 +1,5 @@
 import Logo from "@/assets/images/disgord.png";
+import { Link } from "react-router-dom";
 
 const RegisterInput = () => {
   return (
@@ -78,14 +79,14 @@ const RegisterInput = () => {
               htmlFor="email"
               className="block text-sm font-medium text-gray-900"
             >
-              Nickname
+              Display name
             </label>
             <div className="mt-2">
               <input
-                // id="Nickname"
-                name="Nickname"
+                // id="displayName"
+                name="displayName"
                 type="text"
-                placeholder="Enter your nickname (Optional)"
+                placeholder="Enter your display name (Optional)"
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
               />
             </div>
@@ -96,19 +97,19 @@ const RegisterInput = () => {
               type="submit"
               className="flex w-full justify-center rounded-md bg-sky-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
             >
-              Sign in
+              Sign up
             </button>
           </div>
         </form>
 
         <p className="mt-10 text-center text-sm text-gray-500">
           Already have an account?{" "}
-          <a
-            href="/login"
+          <Link
+            to="/login"
             className="font-semibold leading-6 text-sky-500 hover:text-sky-400"
           >
             Sign in
-          </a>
+          </Link>
         </p>
       </div>
     </div>
