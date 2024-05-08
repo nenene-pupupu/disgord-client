@@ -2,52 +2,38 @@ const ChatChat = () => {
   const chats = [
     {
       profile:
-        "https://instagram.ficn1-1.fna.fbcdn.net/v/t51.2885-19/316353753_926707678292197_7726306747457837288_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.ficn1-1.fna.fbcdn.net&_nc_cat=101&_nc_ohc=xfwuAnUc7oAQ7kNvgEK2BQJ&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfDOvl5HLMrv7r9TVmnMLZpt-fDNMRfR8Ig8WygMpFfmMg&oe=663B6205&_nc_sid=8b3546",
+        "https://firebasestorage.googleapis.com/v0/b/urbur-5e34d.appspot.com/o/urchive%2Fred.svg?alt=media&token=02ee6ebd-b09c-4eff-be32-4f6fb34bab85",
       name: "성준모",
       message: "디자인 너무 어렵다",
       time: "14:50",
     },
     {
       profile:
-        "https://scontent.cdninstagram.com/v/t51.2885-19/435201158_794471895914749_8927004876572619041_n.jpg?_nc_ht=scontent.cdninstagram.com&_nc_cat=101&_nc_ohc=QAKToX5XZMwQ7kNvgE7-7iu&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfAon6yc4KZATrkDIPSo8BxLN2yzK2_WIZ1hE6uv4fgSJw&oe=663A8F5B&_nc_sid=10d13b",
+        "https://firebasestorage.googleapis.com/v0/b/urbur-5e34d.appspot.com/o/urchive%2Fyellow.svg?alt=media&token=b6a02ee0-a63a-4211-bf24-b30d2d3aeb1f",
       name: "이소을",
       message: "인정",
       time: "14:51",
     },
     {
       profile:
-        "https://scontent.cdninstagram.com/v/t51.2885-19/435201158_794471895914749_8927004876572619041_n.jpg?_nc_ht=scontent.cdninstagram.com&_nc_cat=101&_nc_ohc=QAKToX5XZMwQ7kNvgE7-7iu&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfAon6yc4KZATrkDIPSo8BxLN2yzK2_WIZ1hE6uv4fgSJw&oe=663A8F5B&_nc_sid=10d13b",
-      name: "이소을",
-      message: "인정",
-      time: "14:51",
+        "https://firebasestorage.googleapis.com/v0/b/urbur-5e34d.appspot.com/o/urchive%2Fgreen.svg?alt=media&token=5d6ae782-4c4f-451e-a6da-c5c2b1d247b1",
+      name: "문종환",
+      message: "견뎌",
+      time: "14:55",
     },
     {
       profile:
-        "https://scontent.cdninstagram.com/v/t51.2885-19/435201158_794471895914749_8927004876572619041_n.jpg?_nc_ht=scontent.cdninstagram.com&_nc_cat=101&_nc_ohc=QAKToX5XZMwQ7kNvgE7-7iu&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfAon6yc4KZATrkDIPSo8BxLN2yzK2_WIZ1hE6uv4fgSJw&oe=663A8F5B&_nc_sid=10d13b",
-      name: "이소을",
-      message: "인정",
-      time: "14:51",
+        "https://firebasestorage.googleapis.com/v0/b/urbur-5e34d.appspot.com/o/urchive%2Fred.svg?alt=media&token=02ee6ebd-b09c-4eff-be32-4f6fb34bab85",
+      name: "성준모",
+      message: "넵 ..",
+      time: "14:55",
     },
     {
       profile:
-        "https://scontent.cdninstagram.com/v/t51.2885-19/435201158_794471895914749_8927004876572619041_n.jpg?_nc_ht=scontent.cdninstagram.com&_nc_cat=101&_nc_ohc=QAKToX5XZMwQ7kNvgE7-7iu&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfAon6yc4KZATrkDIPSo8BxLN2yzK2_WIZ1hE6uv4fgSJw&oe=663A8F5B&_nc_sid=10d13b",
-      name: "이소을",
-      message: "인정",
-      time: "14:51",
-    },
-    {
-      profile:
-        "https://scontent.cdninstagram.com/v/t51.2885-19/435201158_794471895914749_8927004876572619041_n.jpg?_nc_ht=scontent.cdninstagram.com&_nc_cat=101&_nc_ohc=QAKToX5XZMwQ7kNvgE7-7iu&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfAon6yc4KZATrkDIPSo8BxLN2yzK2_WIZ1hE6uv4fgSJw&oe=663A8F5B&_nc_sid=10d13b",
-      name: "이소을",
-      message: "인정",
-      time: "14:51",
-    },
-    {
-      profile:
-        "https://scontent.cdninstagram.com/v/t51.2885-19/435201158_794471895914749_8927004876572619041_n.jpg?_nc_ht=scontent.cdninstagram.com&_nc_cat=101&_nc_ohc=QAKToX5XZMwQ7kNvgE7-7iu&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfAon6yc4KZATrkDIPSo8BxLN2yzK2_WIZ1hE6uv4fgSJw&oe=663A8F5B&_nc_sid=10d13b",
-      name: "이소을",
-      message: "인정",
-      time: "14:51",
+        "https://firebasestorage.googleapis.com/v0/b/urbur-5e34d.appspot.com/o/urchive%2Fred.svg?alt=media&token=02ee6ebd-b09c-4eff-be32-4f6fb34bab85",
+      name: "성준모",
+      message: "넵 ..",
+      time: "14:55",
     },
   ];
   return (
@@ -60,7 +46,7 @@ const ChatChat = () => {
         <div className="flex flex-col gap-4 overflow-y-auto">
           {chats.map((v, i) => (
             <div key={i} className="flex gap-2">
-              <img src={v.profile} className="w-12 h-12 rounded-full" />
+              <img src={v.profile} className="w-8 h-8 rounded-full" />
               <div className="flex-1">
                 <div className="flex justify-between">
                   <p>{v.name}</p>
@@ -76,12 +62,18 @@ const ChatChat = () => {
         <div className="sticky bottom-0 bg-gradient-to-t from-white to-transparent h-2 w-full"></div>
       </div>
 
-      <div className="mt-2">
+      <div className="flex mt-2">
         <input
           type="text"
           placeholder="Type a message..."
-          className="p-4 bg-gray-100 rounded-md w-full"
+          className="p-4 bg-gray-100 rounded-tl-md w-full outline-none"
         />
+        <button
+          type="submit"
+          className="bg-sky-500 rounded-tr-md text-white text-xs px-2"
+        >
+          Send
+        </button>
       </div>
     </div>
   );

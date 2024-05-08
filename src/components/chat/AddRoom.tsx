@@ -73,7 +73,7 @@ const AddRoom = ({
                 className="justify-center rounded-md bg-sky-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 ml-3"
                 onClick={() => setOpen(false)}
               >
-                만들기
+                Create
               </button>
               <button
                 type="button"

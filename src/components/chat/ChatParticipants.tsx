@@ -4,17 +4,17 @@ const ChatParticipants = () => {
   const clients = [
     {
       profile:
-        "https://scontent.cdninstagram.com/v/t51.2885-19/435201158_794471895914749_8927004876572619041_n.jpg?_nc_ht=scontent.cdninstagram.com&_nc_cat=101&_nc_ohc=QAKToX5XZMwQ7kNvgE7-7iu&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfAon6yc4KZATrkDIPSo8BxLN2yzK2_WIZ1hE6uv4fgSJw&oe=663A8F5B&_nc_sid=10d13b",
+        "https://firebasestorage.googleapis.com/v0/b/urbur-5e34d.appspot.com/o/urchive%2Fyellow.svg?alt=media&token=b6a02ee0-a63a-4211-bf24-b30d2d3aeb1f",
       name: "이소을",
     },
     {
       profile:
-        "https://scontent.cdninstagram.com/v/t51.2885-19/435201158_794471895914749_8927004876572619041_n.jpg?_nc_ht=scontent.cdninstagram.com&_nc_cat=101&_nc_ohc=QAKToX5XZMwQ7kNvgE7-7iu&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfAon6yc4KZATrkDIPSo8BxLN2yzK2_WIZ1hE6uv4fgSJw&oe=663A8F5B&_nc_sid=10d13b",
+        "https://firebasestorage.googleapis.com/v0/b/urbur-5e34d.appspot.com/o/urchive%2Fgreen.svg?alt=media&token=5d6ae782-4c4f-451e-a6da-c5c2b1d247b1",
       name: "문종환",
     },
     {
       profile:
-        "https://instagram.ficn1-1.fna.fbcdn.net/v/t51.2885-19/316353753_926707678292197_7726306747457837288_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.ficn1-1.fna.fbcdn.net&_nc_cat=101&_nc_ohc=xfwuAnUc7oAQ7kNvgEK2BQJ&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AfDOvl5HLMrv7r9TVmnMLZpt-fDNMRfR8Ig8WygMpFfmMg&oe=663B6205&_nc_sid=8b3546",
+        "https://firebasestorage.googleapis.com/v0/b/urbur-5e34d.appspot.com/o/urchive%2Fred.svg?alt=media&token=02ee6ebd-b09c-4eff-be32-4f6fb34bab85",
       name: "성준모",
     },
     {

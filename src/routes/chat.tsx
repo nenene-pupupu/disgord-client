@@ -8,7 +8,7 @@ export default function Chat() {
     <div className="flex flex-row gap-4 h-full">
       <ChatRoomList />
       <ChatLayout />
-      <div className="flex flex-col gap-4 w-96 h-full">
+      <div className="flex flex-col gap-4 w-96 h-full mr-2">
         <ChatParticipants />
         <ChatChat />
       </div>
