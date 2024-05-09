@@ -2,8 +2,9 @@ import { IconSky } from "@/assets/svg";
 import { IoAdd } from "react-icons/io5";
 import Tooltip from "@components/common/Tooltip";
 import { useState } from "react";
-import AddRoom from "./AddRoom";
+import RoomModal from "./RoomModal";
 import { MdChevronRight } from "react-icons/md";
+import { IoEllipsisHorizontalCircle } from "react-icons/io5";
 
 const rooms = [
   {
@@ -33,16 +34,22 @@ const rooms = [
 ];
 
 const ChatRoomList = () => {
-  const [modal, setModal] = useState(false);
+  const [openModal, setopenModal] = useState(false);
+  const [type, setType] = useState("");
 
   return (
     <div>
-      <AddRoom open={modal} setOpen={setModal} />
+      <RoomModal type={type} open={openModal} setOpen={setopenModal} />
 
       <div className="flex mt-4 mb-2">
         <h2 className="text-2xl flex-auto">Channels</h2>
         <Tooltip message="Add Room">
-          <button onClick={() => setModal(true)}>
+          <button
+            onClick={() => {
+              setType("add");
+              setopenModal(true);
+            }}
+          >
             <IoAdd className="h-8 w-8 text-gray-400" />
           </button>
         </Tooltip>
@@ -68,11 +75,21 @@ const ChatRoomList = () => {
                 </p>
               </div>
             </div>
-            <Tooltip message="Enter Room">
-              <button>
-                <MdChevronRight className="h-6 w-6 text-gray-400 font-thin" />
+            <div className="flex">
+              <button
+                onClick={() => {
+                  setType("modify");
+                  setopenModal(true);
+                }}
+              >
+                <IoEllipsisHorizontalCircle className="h-6 w-6 text-gray-400 font-thin" />
               </button>
-            </Tooltip>
+              <Tooltip message="Enter Room">
+                <button>
+                  <MdChevronRight className="h-6 w-6 text-gray-400 font-thin" />
+                </button>
+              </Tooltip>
+            </div>
           </li>
         ))}
       </ul>

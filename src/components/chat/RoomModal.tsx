@@ -1,12 +1,18 @@
 import { Dialog } from "@headlessui/react";
+import { useState } from "react";
 
 const AddRoom = ({
+  type,
   open,
   setOpen,
 }: {
+  type: string;
   open: boolean;
   setOpen: (open: boolean) => void;
 }) => {
+  const isAdd = type == "add" ? true : false;
+  const [text, setText] = useState("original channel name");
+
   return (
     <Dialog
       className="relative z-10"
@@ -20,7 +26,7 @@ const AddRoom = ({
           <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl my-8 w-full max-w-lg">
             <div className="bg-white p-6">
               <Dialog.Title className="text-lg text-center font-semibold leading-6 text-gray-900">
-                Create New Channel
+                {isAdd ? "Create New Channel" : "Modify Channel"}
               </Dialog.Title>
               <div className="mt-8 mx-auto w-full max-w-sm">
                 <form className="space-y-6" action="#" method="POST">
@@ -37,6 +43,8 @@ const AddRoom = ({
                         name="id"
                         type="text"
                         required
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
                         placeholder="Enter channel name"
                         className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
                       />
@@ -70,17 +78,17 @@ const AddRoom = ({
             <div className="bg-gray-100 px-6 py-3 flex flex-row-reverse ">
               <button
                 type="submit"
-                className="justify-center rounded-md bg-sky-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 ml-3"
+                className={`justify-center rounded-md ${isAdd ? "bg-sky-500" : "bg-red-600"} px-3 py-2 text-sm font-semibold text-white shadow-sm ${isAdd ? "hover:bg-sky-400" : "hover:bg-red-500"} ml-3`}
                 onClick={() => setOpen(false)}
               >
-                Create
+                {isAdd ? "Create" : "Delete"}
               </button>
               <button
                 type="button"
                 className="justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                 onClick={() => setOpen(false)}
               >
-                Cancel
+                {isAdd ? "Cancel" : "Modify"}
               </button>
             </div>
           </Dialog.Panel>
