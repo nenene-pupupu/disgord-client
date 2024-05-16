@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { IconSky } from "@/assets/svg";
-import ForgotPassword from "./ForgotPassword";
+import AlertModal from "../common/AlertModal";
 import { Link } from "react-router-dom";
 
 const LoginInput = () => {
@@ -8,7 +8,7 @@ const LoginInput = () => {
 
   return (
     <div>
-      <ForgotPassword open={dialog} setOpen={setDialog} />
+      <AlertModal open={dialog} setOpen={setDialog} type="ForgotPassword" />
 
       <div className="mx-auto w-full max-w-sm">
         <img src={IconSky} className="rounded-full mx-auto h-14 w-14" />

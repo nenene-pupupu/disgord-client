@@ -5,6 +5,7 @@ import { useState } from "react";
 import RoomModal from "./RoomModal";
 import { MdChevronRight } from "react-icons/md";
 import { IoEllipsisHorizontalCircle } from "react-icons/io5";
+import { IoCreateOutline } from "react-icons/io5";
 
 const rooms = [
   {
@@ -82,7 +83,7 @@ const ChatRoomList = () => {
                   setopenModal(true);
                 }}
               >
-                <IoEllipsisHorizontalCircle className="h-6 w-6 text-gray-400 font-thin" />
+                <IoCreateOutline className="h-6 w-6 text-gray-400 font-thin" />
               </button>
               <Tooltip message="Enter Room">
                 <button>

@@ -2,13 +2,34 @@ import { Dialog } from "@headlessui/react";
 import { IoAlertCircleOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
-const ForgotPassword = ({
+const modals = {
+  ForgotPassword: {
+    title: "Forgot Password?",
+    message: "다시 회원가입 진행 부탁드리실게요🙏",
+    button: "Sign up",
+    to: "/register",
+  },
+  DeleteAccount: {
+    title: "Delete Account?",
+    message: "정말로 계정을 삭제하시겠습니까?",
+    button: "Delete",
+    to: "/",
+  },
+};
+
+type ModalType = "ForgotPassword" | "DeleteAccount";
+
+const AlertModal = ({
   open,
   setOpen,
+  type,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
+  type: ModalType;
 }) => {
+  const modalData = modals[type];
+
   return (
     <Dialog
       className="relative z-10"
@@ -30,23 +51,21 @@ const ForgotPassword = ({
                     as="h3"
                     className="text-base font-semibold leading-6 text-gray-900"
                   >
-                    Forgot Password?
+                    {modalData.title}
                   </Dialog.Title>
                   <div className="mt-2">
-                    <p className="text-md text-gray-500">
-                      다시 회원가입 진행 부탁드리실게요🙏
-                    </p>
+                    <p className="text-md text-gray-500">{modalData.message}</p>
                   </div>
                 </div>
               </div>
             </div>
             <div className="bg-gray-100 px-6 py-3 flex flex-row-reverse ">
               <Link
-                to="/register"
+                to={modalData.to}
                 onClick={() => setOpen(false)}
                 className="justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 ml-3"
               >
-                Sign up
+                {modalData.button}
               </Link>
               <button
                 type="button"
@@ -63,4 +82,4 @@ const ForgotPassword = ({
   );
 };
 
-export default ForgotPassword;
+export default AlertModal;
