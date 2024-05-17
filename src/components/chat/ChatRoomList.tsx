@@ -1,10 +1,9 @@
 import { IconSky } from "@/assets/svg";
-import { IoAdd } from "react-icons/io5";
+import { IoAdd, IoLockClosed } from "react-icons/io5";
 import Tooltip from "@components/common/Tooltip";
 import { useState } from "react";
 import RoomModal from "./RoomModal";
 import { MdChevronRight } from "react-icons/md";
-import { IoEllipsisHorizontalCircle } from "react-icons/io5";
 import { IoCreateOutline } from "react-icons/io5";
 
 const rooms = [
@@ -13,24 +12,32 @@ const rooms = [
     icon: IconSky,
     name: "디스고드 만들기#1",
     focus: true,
+    owner: true,
+    private: false,
   },
   {
     id: 2,
     icon: IconSky,
-    name: "room2",
+    name: "비밀방",
     focus: false,
+    owner: false,
+    private: true,
   },
   {
     id: 3,
     icon: IconSky,
     name: "room3",
     focus: false,
+    owner: false,
+    private: false,
   },
   {
     id: 4,
     icon: IconSky,
     name: "room4",
     focus: false,
+    owner: false,
+    private: false,
   },
 ];
 
@@ -70,21 +77,24 @@ const ChatRoomList = () => {
                 src={chatRoom.icon}
                 alt=""
               />
-              <div className="min-w-0 flex-auto">
+              <div className="min-w-0 flex-auto flex items-center gap-2">
                 <p className={"text-sm font-semibold leading-6 text-gray-900"}>
                   {chatRoom.name}
                 </p>
+                {chatRoom.private && <IoLockClosed className="text-gray-400" />}
               </div>
             </div>
-            <div className="flex">
-              <button
-                onClick={() => {
-                  setType("modify");
-                  setopenModal(true);
-                }}
-              >
-                <IoCreateOutline className="h-6 w-6 text-gray-400 font-thin" />
-              </button>
+            <div className="flex-1 flex justify-end">
+              {chatRoom.owner && (
+                <button
+                  onClick={() => {
+                    setType("modify");
+                    setopenModal(true);
+                  }}
+                >
+                  <IoCreateOutline className="h-6 w-6 text-gray-400 font-thin" />
+                </button>
+              )}
               <Tooltip message="Enter Room">
                 <button>
                   <MdChevronRight className="h-6 w-6 text-gray-400 font-thin" />

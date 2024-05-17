@@ -17,7 +17,7 @@ const Sidebar = () => {
           <IoSettings size={20} color={"gray"} />
         </div>
       </div>
-      <div className="flex-1 mt-10">
+      <div className="flex-1 mt-20">
         <Navbar />
       </div>
     </div>

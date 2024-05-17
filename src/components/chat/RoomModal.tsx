@@ -11,7 +11,7 @@ const AddRoom = ({
   setOpen: (open: boolean) => void;
 }) => {
   const isAdd = type == "add" ? true : false;
-  const [text, setText] = useState("original channel name");
+  const [text, setText] = useState("디스고드 만들기#1");
 
   return (
     <Dialog

@@ -1,4 +1,4 @@
-import { IconSky } from "@/assets/svg";
+import { IconYellow } from "@/assets/svg";
 import AlertModal from "@/components/common/AlertModal";
 import { useState } from "react";
 
@@ -15,8 +15,8 @@ export default function Profile() {
         <div className="w-1/3 h-3/4 min-w-[400px] p-12 flex flex-col items-center justify-center gap-8 shadow-xl">
           <p className="text-2xl font-bold text-sky-600">My Profile</p>
           <div className="flex flex-col items-center gap-2">
-            <img src={IconSky} className="w-24 h-24 rounded-full" />
-            <p className="text-gray-900 text-xl font-medium">성준모</p>
+            <img src={IconYellow} className="w-24 h-24 rounded-full" />
+            <p className="text-gray-900 text-xl font-medium">ssol00</p>
           </div>
           <div className="w-full flex flex-col gap-4">
             {isEdit && (
@@ -27,7 +27,7 @@ export default function Profile() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="text-gray-900 text-xl font-medium"
+                  className="text-gray-900 text-xl font-medium py-1"
                 />
               </div>
             )}
@@ -39,10 +39,10 @@ export default function Profile() {
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  className="text-gray-900 text-xl font-medium"
+                  className="text-gray-900 text-xl font-medium py-1"
                 />
               ) : (
-                <p className="text-gray-900 text-xl font-medium">
+                <p className="text-gray-900 text-xl font-medium py-1">
                   {displayName}
                 </p>
               )}
@@ -68,18 +68,26 @@ export default function Profile() {
               ) : (
                 <button
                   onClick={() => setIsEdit(true)}
-                  className="flex w-full justify-center rounded-md bg-sky-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
+                  className="flex w-full justify-center rounded-md bg-white px-3 py-1.5 text-sm font-semibold leading-6 shadow-sm hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-200 border-sky-400 border-2 text-sky-400 mb-2"
                 >
                   Edit profile
                 </button>
               )}
               {!isEdit && (
-                <button
-                  onClick={() => setDialog(true)}
-                  className="mt-6 text-center text-sm text-gray-500 underline"
-                >
-                  Delete Account
-                </button>
+                <>
+                  <button
+                    onClick={() => setIsEdit(true)}
+                    className="flex w-full justify-center rounded-md bg-sky-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
+                  >
+                    Logout
+                  </button>
+                  <button
+                    onClick={() => setDialog(true)}
+                    className="mt-6 text-center text-sm text-gray-500 underline"
+                  >
+                    Delete Account
+                  </button>
+                </>
               )}
             </div>
           </div>

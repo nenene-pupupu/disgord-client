@@ -10,7 +10,7 @@ const ChatChat = () => {
     {
       profile:
         "https://firebasestorage.googleapis.com/v0/b/urbur-5e34d.appspot.com/o/urchive%2Fyellow.svg?alt=media&token=b6a02ee0-a63a-4211-bf24-b30d2d3aeb1f",
-      name: "이소을",
+      name: "쏠라예용",
       message: "인정",
       time: "14:51",
     },
