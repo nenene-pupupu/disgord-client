@@ -1,10 +1,33 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { IconSky } from "@/assets/svg";
 import AlertModal from "../common/AlertModal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
+import { signin } from "@/services/authService";
 
 const LoginInput = () => {
   const [dialog, setDialog] = useState(false);
+  const username = useRef<HTMLInputElement>(null);
+  const password = useRef<HTMLInputElement>(null);
+  const { setToken } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogin = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.preventDefault();
+    if (password.current?.value === "" || username.current?.value === "")
+      return;
+
+    const data = await signin("user1", "user1");
+    console.log("login data", data);
+    // error handling 해야함
+    const { accessToken } = data;
+    setToken(accessToken);
+    localStorage.setItem("accessToken", accessToken);
+    alert("Welcome");
+    navigate("/");
+  };
 
   return (
     <div>
@@ -17,7 +40,7 @@ const LoginInput = () => {
         </h2>
       </div>
       <div className="mt-8 mx-auto w-full max-w-sm">
-        <form className="space-y-6" action="#" method="POST">
+        <form className="space-y-6" method="POST">
           <div>
             <label
               htmlFor="email"
@@ -27,7 +50,7 @@ const LoginInput = () => {
             </label>
             <div className="mt-2">
               <input
-                // id="id"
+                ref={username}
                 name="name"
                 type="text"
                 required
@@ -56,7 +79,7 @@ const LoginInput = () => {
               </div>
               <div className="mt-2">
                 <input
-                  // id="password"
+                  ref={password}
                   name="password"
                   type="password"
                   required
@@ -69,6 +92,7 @@ const LoginInput = () => {
           <div>
             <button
               type="submit"
+              onClick={handleLogin}
               className="flex w-full justify-center rounded-md bg-sky-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
             >
               Sign in

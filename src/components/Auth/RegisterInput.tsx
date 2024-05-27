@@ -1,7 +1,34 @@
 import { IconSky } from "@/assets/svg";
-import { Link } from "react-router-dom";
+import { signup } from "@/services/authService";
+import { useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const RegisterInput = () => {
+  const username = useRef<HTMLInputElement>(null);
+  const password = useRef<HTMLInputElement>(null);
+  const displayname = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
+
+  const handleRegister = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.preventDefault();
+    if (
+      password.current?.value === "" ||
+      username.current?.value === "" ||
+      displayname.current?.value === ""
+    )
+      return;
+
+    const data = await signup("user1", "user1", "USER1");
+    console.log("login data", data);
+    // error handling 해야함
+
+    // 단순히 login 으로 이동
+    alert("Membership success! Please log in!");
+    navigate("/login");
+  };
+
   return (
     <div>
       <div className="mx-auto w-full max-w-sm">
@@ -22,7 +49,7 @@ const RegisterInput = () => {
             </label>
             <div className="mt-2">
               <input
-                // id="name"
+                ref={username}
                 name="name"
                 type="text"
                 required
@@ -43,7 +70,7 @@ const RegisterInput = () => {
               </label>
               <div className="mt-2">
                 <input
-                  // id="password"
+                  ref={password}
                   name="password"
                   type="password"
                   required
@@ -63,7 +90,7 @@ const RegisterInput = () => {
             </label>
             <div className="mt-2">
               <input
-                // id="displayName"
+                ref={displayname}
                 name="displayName"
                 type="text"
                 placeholder="Enter your display name (Optional)"
@@ -74,6 +101,7 @@ const RegisterInput = () => {
 
           <div>
             <button
+              onClick={handleRegister}
               type="submit"
               className="flex w-full justify-center rounded-md bg-sky-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
             >

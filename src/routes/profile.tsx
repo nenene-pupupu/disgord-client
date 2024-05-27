@@ -1,12 +1,22 @@
 import { IconYellow } from "@/assets/svg";
 import AlertModal from "@/components/common/AlertModal";
+import { useAuth } from "@components/Auth/AuthContext";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const [dialog, setDialog] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [displayName, setDisplayName] = useState("쏠라예용");
   const [password, setPassword] = useState("password");
+
+  const { setToken } = useAuth();
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    setToken(null);
+    navigate("/");
+  };
+
   return (
     <>
       <AlertModal open={dialog} setOpen={setDialog} type="DeleteAccount" />
@@ -76,7 +86,7 @@ export default function Profile() {
               {!isEdit && (
                 <>
                   <button
-                    onClick={() => setIsEdit(true)}
+                    onClick={handleLogout}
                     className="flex w-full justify-center rounded-md bg-sky-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
                   >
                     Logout

@@ -1,4 +1,4 @@
-import RegisterInput from "@components/register/RegisterInput";
+import RegisterInput from "@components/Auth/RegisterInput";
 
 export default function Register() {
   return (

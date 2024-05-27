@@ -2,12 +2,11 @@ import { Link } from "react-router-dom";
 import { HiHome } from "react-icons/hi";
 import { IoChatbox } from "react-icons/io5";
 import { IoPerson } from "react-icons/io5";
-import { useState } from "react";
 import { FaSignInAlt } from "react-icons/fa";
+import { useAuth } from "./Auth/AuthContext";
 
 const Navbar = () => {
-  const [isLogin, setIsLogin] = useState(false);
-
+  const { token } = useAuth();
   return (
     <nav>
       <ul className="flex flex-col gap-10 jusitfy-center items-center">
@@ -21,8 +20,8 @@ const Navbar = () => {
             <IoChatbox size={20} color="gray" />
           </Link>
         </li>
-        <li onClick={() => setIsLogin((p) => !p)}>
-          {isLogin ? (
+        <li>
+          {token ? (
             <Link to={"/profile"}>
               <IoPerson size={20} color="gray" />
             </Link>
