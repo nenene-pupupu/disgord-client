@@ -1,3 +1,5 @@
+import useFetchWithAuth from "@/hooks/useFetchWithAuth";
+import { Chatroom } from "@/types/chatroom";
 import { Dialog } from "@headlessui/react";
 import { useState } from "react";
 
@@ -11,7 +13,24 @@ const AddRoom = ({
   setOpen: (open: boolean) => void;
 }) => {
   const isAdd = type == "add" ? true : false;
-  const [text, setText] = useState("디스고드 만들기#1");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const fetchWithAuth = useFetchWithAuth();
+
+  const setChatroom = async () => {
+    const res = await fetchWithAuth("http://localhost:8080/chatroom", {
+      method: "POST",
+      body: JSON.stringify({ name, password }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) {
+      throw new Error("Failed to fetch");
+    }
+    const data: Chatroom = await res.json();
+    console.log(data);
+  };
 
   return (
     <Dialog
@@ -43,8 +62,8 @@ const AddRoom = ({
                         name="id"
                         type="text"
                         required
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                         placeholder="Enter channel name"
                         className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
                       />
@@ -66,6 +85,8 @@ const AddRoom = ({
                           // id="password"
                           name="password"
                           type="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
                           placeholder="Enter password (optional)"
                           className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
                         />
@@ -79,7 +100,10 @@ const AddRoom = ({
               <button
                 type="submit"
                 className={`justify-center rounded-md ${isAdd ? "bg-sky-500" : "bg-red-600"} px-3 py-2 text-sm font-semibold text-white shadow-sm ${isAdd ? "hover:bg-sky-400" : "hover:bg-red-500"} ml-3`}
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false);
+                  isAdd && setChatroom();
+                }}
               >
                 {isAdd ? "Create" : "Delete"}
               </button>
