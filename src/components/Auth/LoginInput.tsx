@@ -2,8 +2,8 @@ import { useRef, useState } from "react";
 import { IconSky } from "@/assets/svg";
 import AlertModal from "../common/AlertModal";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "./AuthContext";
 import { signin } from "@/services/authService";
+import { useAuth } from "@/hooks/useAuth";
 
 const LoginInput = () => {
   const [dialog, setDialog] = useState(false);

@@ -1,6 +1,6 @@
+import { useAuth } from "@/hooks/useAuth";
 import useFetchWithAuth from "@/hooks/useFetchWithAuth";
 import { User } from "@/types";
-import { useAuth } from "@components/Auth/AuthContext";
 import ChatChat from "@components/chat/ChatChat";
 import ChatLayout from "@components/chat/ChatLayout";
 import ChatLogin from "@components/chat/ChatLogin";

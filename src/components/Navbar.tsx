@@ -3,7 +3,7 @@ import { HiHome } from "react-icons/hi";
 import { IoChatbox } from "react-icons/io5";
 import { IoPerson } from "react-icons/io5";
 import { FaSignInAlt } from "react-icons/fa";
-import { useAuth } from "./Auth/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 
 const Navbar = () => {
   const { token } = useAuth();

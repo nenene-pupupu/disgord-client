@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "@components/Sidebar";
-import { AuthProvider } from "@components/Auth/AuthContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 export default function Root() {
   return (

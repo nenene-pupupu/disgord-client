@@ -1,6 +1,6 @@
 import { IconYellow } from "@/assets/svg";
-import AlertModal from "@/components/common/AlertModal";
-import { useAuth } from "@components/Auth/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
+import AlertModal from "@components/common/AlertModal";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 

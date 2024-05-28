@@ -1,4 +1,4 @@
-import { useAuth } from "@/components/Auth/AuthContext";
+import { useAuth } from "./useAuth";
 
 const useFetchWithAuth = () => {
   const { token } = useAuth();
