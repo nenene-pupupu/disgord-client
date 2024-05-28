@@ -3,15 +3,14 @@ import { Chatroom } from "@/types/chatroom";
 import { Dialog } from "@headlessui/react";
 import { useState } from "react";
 
-const AddRoom = ({
-  type,
-  open,
-  setOpen,
-}: {
+interface ModalProp {
+  target?: number;
   type: string;
   open: boolean;
   setOpen: (open: boolean) => void;
-}) => {
+}
+
+const AddRoom = ({ target, type, open, setOpen }: ModalProp) => {
   const isAdd = type == "add" ? true : false;
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -30,6 +29,23 @@ const AddRoom = ({
     }
     const data: Chatroom = await res.json();
     console.log(data);
+  };
+
+  const delChatroom = async () => {
+    console.log(target);
+    const res = await fetchWithAuth(
+      `http://localhost:8080/chatrooms/${target}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    if (!res.ok) {
+      throw new Error("Failed to fetch");
+    }
+    alert("Deleted successfully");
   };
 
   return (
@@ -102,7 +118,7 @@ const AddRoom = ({
                 className={`justify-center rounded-md ${isAdd ? "bg-sky-500" : "bg-red-600"} px-3 py-2 text-sm font-semibold text-white shadow-sm ${isAdd ? "hover:bg-sky-400" : "hover:bg-red-500"} ml-3`}
                 onClick={() => {
                   setOpen(false);
-                  isAdd && setChatroom();
+                  isAdd ? setChatroom() : delChatroom();
                 }}
               >
                 {isAdd ? "Create" : "Delete"}

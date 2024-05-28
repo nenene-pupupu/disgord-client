@@ -9,8 +9,9 @@ import useFetchWithAuth from "@/hooks/useFetchWithAuth";
 import { Chatroom } from "@/types/chatroom";
 
 const ChatRoomList = () => {
-  const [openModal, setopenModal] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
   const [type, setType] = useState("");
+  const [target, setTarget] = useState<number>();
   const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
   const fetchWithAuth = useFetchWithAuth();
 
@@ -29,7 +30,12 @@ const ChatRoomList = () => {
 
   return (
     <div className="flex flex-col">
-      <RoomModal type={type} open={openModal} setOpen={setopenModal} />
+      <RoomModal
+        target={target}
+        type={type}
+        open={openModal}
+        setOpen={setOpenModal}
+      />
 
       <div className="flex mt-4 mb-2">
         <h2 className="text-2xl flex-auto">Channels</h2>
@@ -37,7 +43,7 @@ const ChatRoomList = () => {
           <button
             onClick={() => {
               setType("add");
-              setopenModal(true);
+              setOpenModal(true);
             }}
           >
             <IoAdd className="h-8 w-8 text-gray-400" />
@@ -74,7 +80,8 @@ const ChatRoomList = () => {
                 <button
                   onClick={() => {
                     setType("modify");
-                    setopenModal(true);
+                    setTarget(chatRoom.id);
+                    setOpenModal(true);
                   }}
                 >
                   <IoCreateOutline className="h-6 w-6 text-gray-400 font-thin" />
