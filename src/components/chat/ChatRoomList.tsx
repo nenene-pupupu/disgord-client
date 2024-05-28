@@ -16,7 +16,7 @@ const ChatRoomList = () => {
 
   useEffect(() => {
     const getChatroom = async () => {
-      const res = await fetchWithAuth("http://localhost:8080/chatroom");
+      const res = await fetchWithAuth("http://localhost:8080/chatrooms");
       if (!res.ok) {
         throw new Error("Failed to fetch");
       }

@@ -16,7 +16,7 @@ export default function Chat() {
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const res = await fetchWithAuth("http://localhost:8080/user");
+        const res = await fetchWithAuth("http://localhost:8080/users");
         if (!res.ok) {
           throw new Error("Failed to fetch");
         }

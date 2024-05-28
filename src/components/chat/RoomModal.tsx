@@ -18,7 +18,7 @@ const AddRoom = ({
   const fetchWithAuth = useFetchWithAuth();
 
   const setChatroom = async () => {
-    const res = await fetchWithAuth("http://localhost:8080/chatroom", {
+    const res = await fetchWithAuth("http://localhost:8080/chatrooms", {
       method: "POST",
       body: JSON.stringify({ name, password }),
       headers: {
