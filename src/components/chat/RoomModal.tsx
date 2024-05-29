@@ -1,5 +1,6 @@
-import useFetchWithAuth from "@/hooks/useFetchWithAuth";
-import { Chatroom } from "@/types/chatroom";
+import { useAuth } from "@/hooks/useAuth";
+import { addChatroom, delChatroom, modChatroom } from "@/services/chatService";
+// import { Chatroom } from "@/types/chatroom";
 import { Dialog } from "@headlessui/react";
 import { useState } from "react";
 
@@ -14,38 +15,37 @@ const AddRoom = ({ target, type, open, setOpen }: ModalProp) => {
   const isAdd = type == "add" ? true : false;
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const fetchWithAuth = useFetchWithAuth();
+  const { token } = useAuth();
 
-  const setChatroom = async () => {
-    const res = await fetchWithAuth("http://localhost:8080/chatrooms", {
-      method: "POST",
-      body: JSON.stringify({ name, password }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!res.ok) {
-      throw new Error("Failed to fetch");
-    }
-    const data: Chatroom = await res.json();
-    console.log(data);
+  const handleCreate = async () => {
+    // 여기부분 좀 더 제대로
+    if (!token) return;
+    const res = addChatroom(token, name, password);
+    console.log(res);
   };
 
-  const delChatroom = async () => {
+  const handleDelete = async () => {
     console.log(target);
-    const res = await fetchWithAuth(
-      `http://localhost:8080/chatrooms/${target}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-    if (!res.ok) {
-      throw new Error("Failed to fetch");
+    // 여기부분 좀 더 제대로
+    if (!token || !target) return;
+    try {
+      delChatroom(token, target);
+    } catch (err) {
+      alert("err while delete");
     }
-    alert("Deleted successfully");
+    // const res = delChatroom(token, target);
+    // if (res) {
+    //   alert("Deleted successfully");
+    // }
+  };
+
+  const handleModify = async () => {
+    if (!token || !target) return;
+    try {
+      modChatroom(token, target, name, password);
+    } catch (err) {
+      alert("err while modify");
+    }
   };
 
   return (
@@ -118,7 +118,7 @@ const AddRoom = ({ target, type, open, setOpen }: ModalProp) => {
                 className={`justify-center rounded-md ${isAdd ? "bg-sky-500" : "bg-red-600"} px-3 py-2 text-sm font-semibold text-white shadow-sm ${isAdd ? "hover:bg-sky-400" : "hover:bg-red-500"} ml-3`}
                 onClick={() => {
                   setOpen(false);
-                  isAdd ? setChatroom() : delChatroom();
+                  isAdd ? handleCreate() : handleDelete();
                 }}
               >
                 {isAdd ? "Create" : "Delete"}
@@ -126,7 +126,10 @@ const AddRoom = ({ target, type, open, setOpen }: ModalProp) => {
               <button
                 type="button"
                 className="justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false);
+                  !isAdd && handleModify();
+                }}
               >
                 {isAdd ? "Cancel" : "Modify"}
               </button>

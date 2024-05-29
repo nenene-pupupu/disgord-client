@@ -62,7 +62,7 @@ const ChatChat = () => {
         <div className="sticky bottom-0 bg-gradient-to-t from-white to-transparent h-2 w-full"></div>
       </div>
 
-      <div className="flex mt-2 mt-auto">
+      <div className="flex mt-2">
         <input
           type="text"
           placeholder="Type a message..."

@@ -1,32 +1,25 @@
 import { IconSky } from "@/assets/svg";
 import { IoAdd, IoLockClosed } from "react-icons/io5";
 import Tooltip from "@components/common/Tooltip";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import RoomModal from "./RoomModal";
 import { MdChevronRight } from "react-icons/md";
 import { IoCreateOutline } from "react-icons/io5";
-import useFetchWithAuth from "@/hooks/useFetchWithAuth";
-import { Chatroom } from "@/types/chatroom";
+import { useChatrooms } from "@/services/chatService";
 
 const ChatRoomList = () => {
   const [openModal, setOpenModal] = useState(false);
   const [type, setType] = useState("");
   const [target, setTarget] = useState<number>();
-  const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
-  const fetchWithAuth = useFetchWithAuth();
+  const { data: chatrooms } = useChatrooms();
 
-  useEffect(() => {
-    const getChatroom = async () => {
-      const res = await fetchWithAuth("http://localhost:8080/chatrooms");
-      if (!res.ok) {
-        throw new Error("Failed to fetch");
-      }
-      const data: Chatroom[] = await res.json();
-      console.log(data);
-      setChatrooms(data);
-    };
-    getChatroom();
-  }, []);
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
+
+  // if (error) {
+  //   return <div>Error: {error}</div>;
+  // }
 
   return (
     <div className="flex flex-col">
@@ -55,7 +48,7 @@ const ChatRoomList = () => {
         role="list"
         className="divide-y divide-gray-100 overflow-y-scrol w-60"
       >
-        {chatrooms.length === 0 ? (
+        {!chatrooms || chatrooms.length === 0 ? (
           <>
             <p className="text-gray-400">
               No channels here yet
