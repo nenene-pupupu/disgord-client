@@ -1,5 +1,5 @@
-import { useAuth } from "@components/Auth/AuthContext";
 import { useEffect, useState } from "react";
+import { useAuth } from "./useAuth";
 
 const useWebSocketWithAuth = (url: string) => {
   const { token } = useAuth();
@@ -8,20 +8,26 @@ const useWebSocketWithAuth = (url: string) => {
 
   useEffect(() => {
     if (token) {
-      // const ws = new WebSocket(url, ["protocolOne", "protocolTwo"]);
-      const ws = new WebSocket(url);
+      const wsUrl = `${url}?access_token=${token}`;
+      console.log("Connecting to WebSocket URL:", wsUrl);
+      const ws = new WebSocket(wsUrl);
+
       ws.onopen = () => {
         console.log("WebSocket is open now.");
         ws.send(JSON.stringify({ type: "AUTH", token }));
       };
 
       ws.onmessage = (event) => {
-        const message = event.data;
-        setMessages((prev) => [...prev, message]);
+        try {
+          const message = JSON.parse(event.data);
+          setMessages((prev) => [...prev, message]);
+        } catch (error) {
+          console.error("Failed to parse message:", event.data);
+        }
       };
 
-      ws.onclose = () => {
-        console.log("WebSocket is closed now.");
+      ws.onclose = (event) => {
+        console.log("WebSocket is closed now:", event);
       };
 
       ws.onerror = (error) => {
@@ -31,12 +37,27 @@ const useWebSocketWithAuth = (url: string) => {
       setSocket(ws);
 
       return () => {
+        console.log("Cleaning up WebSocket connection.");
         ws.close();
       };
     }
   }, [token, url]);
 
-  return { socket, messages };
+  const sendMessage = (message: {
+    chatroomId: number;
+    senderId: number;
+    action: string;
+    content?: string;
+  }) => {
+    if (socket) {
+      console.log("Sending message:", message);
+      socket.send(JSON.stringify(message));
+    } else {
+      console.error("WebSocket is not connected.");
+    }
+  };
+
+  return { socket, messages, sendMessage };
 };
 
 export default useWebSocketWithAuth;
