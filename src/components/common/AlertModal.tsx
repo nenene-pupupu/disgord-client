@@ -32,7 +32,7 @@ const AlertModal = ({
   type: ModalType;
 }) => {
   const modalData = modals[type];
-  const { token } = useAuth();
+  const { setToken, token } = useAuth();
   const navigatge = useNavigate();
   const [password, setPassword] = useState("");
 
@@ -46,11 +46,12 @@ const AlertModal = ({
       const data = await delUsersMe(token, password);
       console.log(data);
       alert("delete success");
+      setToken(null);
       navigatge("/");
     } catch (error) {
       alert((error as Error).message);
       setPassword("");
-      // navigatge("/profile");
+      navigatge("/profile");
     }
   };
 
