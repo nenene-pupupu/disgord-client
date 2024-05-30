@@ -12,12 +12,7 @@ const ChatChat = ({ target }: { target: number }) => {
   const { messages, sendMessage, appendMessages } = useWebSocket();
 
   useEffect(() => {
-    console.log("Messages state updated:", messages);
-  }, [messages]);
-
-  useEffect(() => {
     const getChat = async () => {
-      console.log("getChat():", target);
       if (!token || !target) return;
       const res = await fetchWithAuth(
         token,
@@ -27,7 +22,6 @@ const ChatChat = ({ target }: { target: number }) => {
         throw new Error("Failed to delete chatroom");
       }
       const data: SockMessage[] = await res.json();
-      console.log("debug", target, data);
       appendMessages(data);
     };
     getChat();

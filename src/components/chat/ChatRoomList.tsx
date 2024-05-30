@@ -23,7 +23,6 @@ const ChatRoomList = ({
 
   const handleEnter = async (id: number) => {
     if (!token) return;
-    console.log("Joining room#", id);
     setTarget(id);
     const res = await fetchWithAuth(
       token,

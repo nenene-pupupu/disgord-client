@@ -26,9 +26,8 @@ const RegisterInput = () => {
         password.current!.value,
         displayname.current!.value,
       );
-      console.log("login data", data);
       // 단순히 login 으로 이동
-      alert("Membership success! Please log in!");
+      alert("Please log in!");
       navigate("/login");
     } catch (error) {
       alert((error as Error).message);

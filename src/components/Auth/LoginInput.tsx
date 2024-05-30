@@ -24,7 +24,6 @@ const LoginInput = () => {
         username.current!.value,
         password.current!.value,
       );
-      console.log("login data", data);
 
       const { accessToken } = data;
       setToken(accessToken);

@@ -80,7 +80,6 @@ export const WebSocketProvider = ({
   };
 
   const appendMessages = (messages: SockMessage[]) => {
-    console.log("try to append...");
     if (socket) {
       console.log("Appending message:", messages);
       setMessages([...messages]);
