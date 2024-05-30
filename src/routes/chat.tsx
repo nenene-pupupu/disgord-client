@@ -2,14 +2,17 @@ import { useAuth } from "@/hooks/useAuth";
 // import useFetchWithAuth from "@/hooks/useFetchWithAuth";
 // import { User } from "@/types";
 import ChatChat from "@components/chat/ChatChat";
+import ChatEnter from "@components/chat/ChatEnter";
 import ChatLayout from "@components/chat/ChatLayout";
 import ChatLogin from "@components/chat/ChatLogin";
 import ChatParticipants from "@components/chat/ChatParticipants";
 import ChatRoomList from "@components/chat/ChatRoomList";
-// import { useEffect } from "react";
+// import WebsocketTest from "@components/chat/WebsocketTest";
+import { useState } from "react";
 
 export default function Chat() {
   const { token } = useAuth();
+  const [target, setTarget] = useState<number>(-1);
   // const fetchWithAuth = useFetchWithAuth();
 
   // useEffect(() => {
@@ -31,15 +34,19 @@ export default function Chat() {
   return (
     <div className="flex flex-row gap-4 h-full">
       {/* <WebsocketTest /> */}
-      <ChatRoomList />
+      <ChatRoomList target={target} setTarget={setTarget} />
       {token ? (
-        <>
-          <ChatLayout />
-          <div className="flex flex-col gap-4 w-96 h-full mr-2">
-            <ChatParticipants />
-            <ChatChat />
-          </div>
-        </>
+        target === -1 ? (
+          <ChatEnter />
+        ) : (
+          <>
+            <ChatLayout target={target} setTarget={setTarget} />
+            <div className="flex flex-col gap-4 w-96 h-full mr-2">
+              <ChatParticipants target={target} />
+              <ChatChat target={target} />
+            </div>
+          </>
+        )
       ) : (
         <ChatLogin />
       )}

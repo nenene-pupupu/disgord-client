@@ -1,8 +1,10 @@
 import React from "react";
 import useWebSocketWithAuth from "@/hooks/useWebSocketWithAuth";
-import useFetchWithAuth from "@/hooks/useFetchWithAuth";
+import { fetchWithAuth } from "@/services/fetchWithAuth";
+import { useAuth } from "@/hooks/useAuth";
 
-const Chat: React.FC = () => {
+const WebsocketTest: React.FC = () => {
+  const { token } = useAuth();
   const { messages, sendMessage } = useWebSocketWithAuth(
     "ws://localhost:8080/ws",
   );
@@ -16,18 +18,15 @@ const Chat: React.FC = () => {
     });
   };
 
-  const fetchWithAuth = useFetchWithAuth();
-
   const getMsgs = async () => {
-    const res = await fetchWithAuth("http://localhost:8080/chats", {
+    if (!token) return;
+    const res = await fetchWithAuth(token, "http://localhost:8080/chats", {
       method: "GET",
     });
-    if (!res.ok) {
-      throw new Error("Failed to fetch");
-    }
-    const data = await res.json();
+    const data = await res?.json();
     console.log(data);
   };
+
   return (
     <div>
       <div>
@@ -45,4 +44,4 @@ const Chat: React.FC = () => {
   );
 };
 
-export default Chat;
+export default WebsocketTest;

@@ -1,6 +1,6 @@
 import { IoMic, IoVideocam } from "react-icons/io5";
 
-const ChatParticipants = () => {
+const ChatParticipants = ({ target }: { target?: number }) => {
   const clients = [
     {
       profile:

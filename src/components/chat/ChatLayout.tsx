@@ -1,7 +1,13 @@
 import { ImPhoneHangUp } from "react-icons/im";
 import { IoHeadset, IoMic, IoPerson, IoVideocam } from "react-icons/io5";
 
-const ChatLayout = () => {
+const ChatLayout = ({
+  target,
+  setTarget,
+}: {
+  target?: number;
+  setTarget: (target: number) => void;
+}) => {
   return (
     <div className="bg-gray-200 rounded-lg w-full flex flex-col gap-4 p-4">
       <div className="flex flex-row justify-between mt-8 mx-8">
@@ -33,7 +39,12 @@ const ChatLayout = () => {
         <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer">
           <IoHeadset />
         </div>
-        <div className="bg-red-500 text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer">
+        <div
+          onClick={() => {
+            setTarget(-1);
+          }}
+          className="bg-red-500 text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
+        >
           <ImPhoneHangUp />
         </div>
       </div>

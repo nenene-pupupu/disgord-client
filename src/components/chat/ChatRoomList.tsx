@@ -6,13 +6,38 @@ import RoomModal from "./RoomModal";
 import { MdChevronRight } from "react-icons/md";
 import { IoCreateOutline } from "react-icons/io5";
 import { useChatrooms } from "@/services/chatService";
+import { fetchWithAuth } from "@/services/fetchWithAuth";
+import { useAuth } from "@/hooks/useAuth";
 
-const ChatRoomList = () => {
+const ChatRoomList = ({
+  target,
+  setTarget,
+}: {
+  target?: number;
+  setTarget: (target: number) => void;
+}) => {
   const [openModal, setOpenModal] = useState(false);
   const [type, setType] = useState("");
-  const [target, setTarget] = useState<number>();
+  const { token } = useAuth();
   const { data: chatrooms } = useChatrooms();
 
+  const handleEnter = async (id: number) => {
+    if (!token) return;
+    setTarget(id);
+    const res = await fetchWithAuth(
+      token,
+      `http://localhost:8080/chatrooms/${id}/join`,
+      {
+        method: "POST",
+      },
+    );
+    if (!res.ok) {
+      console.log("err");
+      return;
+    }
+    const data = await res.json();
+    console.log(data);
+  };
   // if (loading) {
   //   return <div>Loading...</div>;
   // }
@@ -46,7 +71,7 @@ const ChatRoomList = () => {
 
       <ul
         role="list"
-        className="divide-y divide-gray-100 overflow-y-scrol w-60"
+        className="divide-y divide-gray-100 overflow-y-scroll w-60"
       >
         {!chatrooms || chatrooms.length === 0 ? (
           <>
@@ -61,8 +86,8 @@ const ChatRoomList = () => {
             <li
               key={chatRoom.id}
               className={
-                "flex items-center gap-x-4 py-5 px-2 rounded-md "
-                // (chatRoom.focus && "bg-gray-100")
+                "flex items-center gap-x-4 py-5 px-2 rounded-md " +
+                (target === chatRoom.id && "bg-gray-100")
               }
             >
               <div className="flex items-center w-40 gap-x-4">
@@ -73,7 +98,9 @@ const ChatRoomList = () => {
                 />
                 <div className="min-w-0 flex-auto flex items-center gap-2">
                   <p
-                    className={"text-sm font-semibold leading-6 text-gray-900"}
+                    className={
+                      "text-sm font-semibold leading-6 text-gray-900 truncate"
+                    }
                   >
                     {chatRoom.name}
                   </p>
@@ -95,7 +122,12 @@ const ChatRoomList = () => {
                   </button>
                 )}
                 <Tooltip message="Enter Room">
-                  <button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleEnter(chatRoom.id);
+                    }}
+                  >
                     <MdChevronRight className="h-6 w-6 text-gray-400 font-thin" />
                   </button>
                 </Tooltip>

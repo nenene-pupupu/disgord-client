@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
+import { SockMessage } from "@/types";
 
 const useWebSocketWithAuth = (url: string) => {
   const { token } = useAuth();
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<SockMessage[]>([]);
 
   useEffect(() => {
     if (token) {
@@ -19,6 +20,7 @@ const useWebSocketWithAuth = (url: string) => {
 
       ws.onmessage = (event) => {
         try {
+          console.log("Got message:", event.data);
           const message = JSON.parse(event.data);
           setMessages((prev) => [...prev, message]);
         } catch (error) {
@@ -43,21 +45,23 @@ const useWebSocketWithAuth = (url: string) => {
     }
   }, [token, url]);
 
-  const sendMessage = (message: {
-    chatroomId: number;
-    senderId: number;
-    action: string;
-    content?: string;
-  }) => {
+  const sendMessage = (message: SockMessage) => {
     if (socket) {
       console.log("Sending message:", message);
       socket.send(JSON.stringify(message));
+      setMessages((prev) => [...prev, message]);
     } else {
       console.error("WebSocket is not connected.");
     }
   };
 
-  return { socket, messages, sendMessage };
+  const appendMessages = (messages: SockMessage[]) => {
+    if (socket) {
+      console.log("Appending message:", messages);
+      setMessages([...messages]);
+    }
+  };
+  return { socket, messages, sendMessage, appendMessages };
 };
 
 export default useWebSocketWithAuth;
