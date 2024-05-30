@@ -1,6 +1,9 @@
+import { useAuth } from "@/hooks/useAuth";
+import { delUsersMe } from "@/services/profileService";
 import { Dialog } from "@headlessui/react";
+import { useState } from "react";
 import { IoAlertCircleOutline } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const modals = {
   ForgotPassword: {
@@ -13,7 +16,7 @@ const modals = {
     title: "Delete Account?",
     message: "정말로 계정을 삭제하시겠습니까?",
     button: "Delete",
-    to: "/",
+    to: "/profile",
   },
 };
 
@@ -29,6 +32,27 @@ const AlertModal = ({
   type: ModalType;
 }) => {
   const modalData = modals[type];
+  const { token } = useAuth();
+  const navigatge = useNavigate();
+  const [password, setPassword] = useState("");
+
+  const handleDelete = async () => {
+    if (!token) return;
+    if (password == "") {
+      alert("enter password");
+      return;
+    }
+    try {
+      const data = await delUsersMe(token, password);
+      console.log(data);
+      alert("delete success");
+      navigatge("/");
+    } catch (error) {
+      alert((error as Error).message);
+      setPassword("");
+      // navigatge("/profile");
+    }
+  };
 
   return (
     <Dialog
@@ -54,7 +78,31 @@ const AlertModal = ({
                     {modalData.title}
                   </Dialog.Title>
                   <div className="mt-2">
-                    <p className="text-md text-gray-500">{modalData.message}</p>
+                    {type == "ForgotPassword" ? (
+                      <p className="text-md text-gray-500">
+                        {modalData.message}
+                      </p>
+                    ) : (
+                      <div className="flex w-full items-center justify-center gap-2">
+                        <div className="flex items-center justify-center">
+                          <label
+                            htmlFor="password"
+                            className="block text-sm font-medium text-gray-900"
+                          >
+                            Password
+                          </label>
+                        </div>
+                        <div>
+                          <input
+                            onChange={(e) => setPassword(e.target.value)}
+                            name="password"
+                            type="password"
+                            required
+                            className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -62,7 +110,10 @@ const AlertModal = ({
             <div className="bg-gray-100 px-6 py-3 flex flex-row-reverse ">
               <Link
                 to={modalData.to}
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  if (type == "DeleteAccount") handleDelete();
+                  else setOpen(false);
+                }}
                 className="justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 ml-3"
               >
                 {modalData.button}

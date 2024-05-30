@@ -1,20 +1,44 @@
 import { IconYellow } from "@/assets/svg";
+import AlertModal from "@/components/common/AlertModal";
 import { useAuth } from "@/hooks/useAuth";
-import AlertModal from "@components/common/AlertModal";
-import { useState } from "react";
+import { getUsersMe, modUsersMe } from "@/services/profileService";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
   const [dialog, setDialog] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [displayName, setDisplayName] = useState("쏠라예용");
-  const [password, setPassword] = useState("password");
+  const [displayName, setDisplayName] = useState("");
+  const [password, setPassword] = useState("");
 
-  const { setToken } = useAuth();
+  const { setToken, token } = useAuth();
   const navigate = useNavigate();
   const handleLogout = () => {
     setToken(null);
     navigate("/");
+  };
+
+  useEffect(() => {
+    const fetchUsersMe = async () => {
+      if (!token) return;
+      try {
+        const data = await getUsersMe(token);
+        setDisplayName(data.displayName);
+      } catch (error) {
+        alert((error as Error).message);
+      }
+    };
+    fetchUsersMe();
+  }, []);
+
+  const handleModify = async () => {
+    if (!token) return;
+    try {
+      modUsersMe(token, displayName, password);
+      alert("modify success");
+    } catch (error) {
+      alert((error as Error).message);
+    }
   };
 
   return (
@@ -30,18 +54,18 @@ export default function Profile() {
           </div>
           <div className="w-full flex flex-col gap-4">
             {isEdit && (
-              <div className="w-4/5">
+              <div>
                 <p className="text-gray-500 font-medium">password</p>
                 <input
                   name="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="text-gray-900 text-xl font-medium py-1"
+                  className="w-full text-gray-900 text-xl font-medium py-1"
                 />
               </div>
             )}
-            <div className="w-4/5">
+            <div>
               <p className="text-gray-500 font-medium">display name</p>
               {isEdit ? (
                 <input
@@ -49,7 +73,7 @@ export default function Profile() {
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  className="text-gray-900 text-xl font-medium py-1"
+                  className="w-full text-gray-900 text-xl font-medium py-1"
                 />
               ) : (
                 <p className="text-gray-900 text-xl font-medium py-1">
@@ -70,7 +94,11 @@ export default function Profile() {
                   <button
                     type="submit"
                     className="flex w-full justify-center rounded-md bg-sky-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-400 ml-3"
-                    onClick={() => setIsEdit(false)}
+                    onClick={() => {
+                      setIsEdit(false);
+                      setPassword("");
+                      handleModify();
+                    }}
                   >
                     Save
                   </button>

@@ -8,6 +8,12 @@ export const signin = async (username: string, password: string) => {
     },
     body: JSON.stringify({ username, password }),
   });
+
+  if (response.status !== 200) {
+    const errorData = await response.json();
+    throw new Error(errorData.message);
+  }
+
   return response.json();
 };
 
@@ -23,5 +29,11 @@ export const signup = async (
     },
     body: JSON.stringify({ username, password, displayname }),
   });
+
+  if (response.status !== 201) {
+    const errorData = await response.json();
+    throw new Error(errorData.message);
+  }
+
   return response.json();
 };

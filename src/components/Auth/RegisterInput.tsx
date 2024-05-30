@@ -20,13 +20,19 @@ const RegisterInput = () => {
     )
       return;
 
-    const data = await signup("user1", "user1", "USER1");
-    console.log("login data", data);
-    // error handling 해야함
-
-    // 단순히 login 으로 이동
-    alert("Membership success! Please log in!");
-    navigate("/login");
+    try {
+      const data = await signup(
+        username.current!.value,
+        password.current!.value,
+        displayname.current!.value,
+      );
+      console.log("login data", data);
+      // 단순히 login 으로 이동
+      alert("Membership success! Please log in!");
+      navigate("/login");
+    } catch (error) {
+      alert((error as Error).message);
+    }
   };
 
   return (

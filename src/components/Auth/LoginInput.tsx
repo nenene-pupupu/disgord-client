@@ -19,14 +19,21 @@ const LoginInput = () => {
     if (password.current?.value === "" || username.current?.value === "")
       return;
 
-    const data = await signin("user1", "user1");
-    console.log("login data", data);
-    // error handling 해야함
-    const { accessToken } = data;
-    setToken(accessToken);
-    localStorage.setItem("accessToken", accessToken);
-    alert("Welcome");
-    navigate("/");
+    try {
+      const data = await signin(
+        username.current!.value,
+        password.current!.value,
+      );
+      console.log("login data", data);
+
+      const { accessToken } = data;
+      setToken(accessToken);
+      localStorage.setItem("accessToken", accessToken);
+      alert("Welcome");
+      navigate("/");
+    } catch (error) {
+      alert((error as Error).message);
+    }
   };
 
   return (
@@ -91,7 +98,7 @@ const LoginInput = () => {
 
           <div>
             <button
-              type="submit"
+              // type="submit"
               onClick={handleLogin}
               className="flex w-full justify-center rounded-md bg-sky-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
             >
