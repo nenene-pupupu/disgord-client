@@ -52,6 +52,13 @@ const ChatChat = ({ target }: { target: number }) => {
     chatRef.current.value = "";
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   return (
     <div className="flex flex-col h-full overflow-y-auto">
       <div>
@@ -87,6 +94,7 @@ const ChatChat = ({ target }: { target: number }) => {
           type="text"
           placeholder="Type a message..."
           className="p-4 bg-gray-100 rounded-tl-md w-full outline-none"
+          onKeyDown={handleKeyDown}
         />
         <button
           onClick={handleSendMessage}
