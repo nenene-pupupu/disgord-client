@@ -3,7 +3,6 @@ import { useWebSocket } from "@/contexts/WebSocketContext";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { SockMessage, User } from "@/types";
-// import parseTime from "@/utils/parseTime";
 import { useEffect, useRef } from "react";
 
 const ChatChat = ({ target }: { target: number }) => {
@@ -19,7 +18,7 @@ const ChatChat = ({ target }: { target: number }) => {
         `http://localhost:8080/chats?chatroomId=${target}`,
       );
       if (!res.ok) {
-        throw new Error("Failed to delete chatroom");
+        throw new Error("Failed to fetch chat messages");
       }
       const data: SockMessage[] = await res.json();
       appendMessages(data);
@@ -29,10 +28,14 @@ const ChatChat = ({ target }: { target: number }) => {
 
   const handleSendMessage = async () => {
     if (!token) return;
-    if (!chatRef.current || chatRef.current?.value === "") return;
+    if (!chatRef.current || chatRef.current.value.trim() === "") return;
+
+    const messageContent = chatRef.current.value;
+    chatRef.current.value = ""; // Clear the input before async operations
+
     const res = await fetchWithAuth(token, "http://localhost:8080/users/me");
     if (!res.ok) {
-      console.log("err while getting my information");
+      console.log("Error while getting user information");
       return;
     }
     const data: User = await res.json();
@@ -41,14 +44,13 @@ const ChatChat = ({ target }: { target: number }) => {
       chatroomId: target,
       senderId: data.id,
       action: "SEND_TEXT",
-      content: chatRef.current?.value,
+      content: messageContent, // Use the stored message content
     });
-    chatRef.current.value = "";
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
       handleSendMessage();
     }
   };
