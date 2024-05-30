@@ -29,7 +29,7 @@ export default function Profile() {
       }
     };
     fetchUsersMe();
-  }, []);
+  }, [token]);
 
   const handleModify = async () => {
     if (!token) return;

@@ -1,6 +1,6 @@
 import { IconSky } from "@/assets/svg";
+import { useWebSocket } from "@/contexts/WebSocketContext";
 import { useAuth } from "@/hooks/useAuth";
-import useWebSocketWithAuth from "@/hooks/useWebSocketWithAuth";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { SockMessage, User } from "@/types";
 // import parseTime from "@/utils/parseTime";
@@ -9,9 +9,8 @@ import { useEffect, useRef } from "react";
 const ChatChat = ({ target }: { target: number }) => {
   const { token } = useAuth();
   const chatRef = useRef<HTMLInputElement>(null);
-  const { messages, sendMessage, appendMessages } = useWebSocketWithAuth(
-    "ws://localhost:8080/ws",
-  );
+  const { messages, sendMessage, appendMessages } = useWebSocket();
+
   useEffect(() => {
     console.log("Messages state updated:", messages);
   }, [messages]);
@@ -52,6 +51,7 @@ const ChatChat = ({ target }: { target: number }) => {
     });
     chatRef.current.value = "";
   };
+
   return (
     <div className="flex flex-col h-full overflow-y-auto">
       <div>

@@ -1,8 +1,31 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "./useAuth";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { useAuth } from "@/hooks/useAuth";
 import { SockMessage } from "@/types";
 
-const useWebSocketWithAuth = (url: string) => {
+interface WebSocketContextProps {
+  socket: WebSocket | null;
+  messages: SockMessage[];
+  sendMessage: (message: SockMessage) => void;
+  appendMessages: (messages: SockMessage[]) => void;
+}
+
+const WebSocketContext = createContext<WebSocketContextProps | undefined>(
+  undefined,
+);
+
+export const WebSocketProvider = ({
+  url,
+  children,
+}: {
+  url: string;
+  children: ReactNode;
+}) => {
   const { token } = useAuth();
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<SockMessage[]>([]);
@@ -21,8 +44,10 @@ const useWebSocketWithAuth = (url: string) => {
       ws.onmessage = (event) => {
         try {
           console.log("Got message:", event.data);
-          const message = JSON.parse(event.data);
-          setMessages((prev) => [...prev, message]);
+          const message: SockMessage = JSON.parse(event.data);
+          if (message.action === "SEND_TEXT") {
+            setMessages((prev) => [...prev, message]);
+          }
         } catch (error) {
           console.error("Failed to parse message:", event.data);
         }
@@ -49,19 +74,32 @@ const useWebSocketWithAuth = (url: string) => {
     if (socket) {
       console.log("Sending message:", message);
       socket.send(JSON.stringify(message));
-      setMessages((prev) => [...prev, message]);
     } else {
       console.error("WebSocket is not connected.");
     }
   };
 
   const appendMessages = (messages: SockMessage[]) => {
+    console.log("try to append...");
     if (socket) {
       console.log("Appending message:", messages);
       setMessages([...messages]);
     }
   };
-  return { socket, messages, sendMessage, appendMessages };
+
+  return (
+    <WebSocketContext.Provider
+      value={{ socket, messages, sendMessage, appendMessages }}
+    >
+      {children}
+    </WebSocketContext.Provider>
+  );
 };
 
-export default useWebSocketWithAuth;
+export const useWebSocket = () => {
+  const context = useContext(WebSocketContext);
+  if (context === undefined) {
+    throw new Error("useWebSocket must be used within a WebSocketProvider");
+  }
+  return context;
+};
