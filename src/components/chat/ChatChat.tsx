@@ -3,12 +3,16 @@ import { useWebSocket } from "@/contexts/WebSocketContext";
 import { useAuth } from "@/hooks/useAuth";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { SockMessage, User } from "@/types";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const ChatChat = ({ target }: { target: number }) => {
   const { token } = useAuth();
   const chatRef = useRef<HTMLInputElement>(null);
   const { messages, sendMessage, appendMessages } = useWebSocket();
+  const [isSending, setIsSending] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const shouldScrollToBottom = useRef(true);
 
   useEffect(() => {
     const getChat = async () => {
@@ -22,37 +26,75 @@ const ChatChat = ({ target }: { target: number }) => {
       }
       const data: SockMessage[] = await res.json();
       appendMessages(data);
+      shouldScrollToBottom.current = true;
+      scrollToBottom();
     };
     getChat();
   }, [token, target]);
 
-  const handleSendMessage = async () => {
-    if (!token) return;
-    if (!chatRef.current || chatRef.current.value.trim() === "") return;
-
-    const messageContent = chatRef.current.value;
-    chatRef.current.value = ""; // Clear the input before async operations
-
-    const res = await fetchWithAuth(token, "http://localhost:8080/users/me");
-    if (!res.ok) {
-      console.log("Error while getting user information");
-      return;
+  useEffect(() => {
+    if (shouldScrollToBottom.current) {
+      scrollToBottom();
     }
-    const data: User = await res.json();
+  }, [messages]);
 
-    sendMessage({
-      chatroomId: target,
-      senderId: data.id,
-      action: "SEND_TEXT",
-      content: messageContent, // Use the stored message content
-    });
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSendMessage = async () => {
+    if (isSending) return;
+    setIsSending(true);
+
+    if (!token) {
+      setIsSending(false);
+      return;
+    }
+    if (!chatRef.current || chatRef.current.value.trim() === "") {
+      setIsSending(false);
+      return;
+    }
+    const messageContent = chatRef.current.value;
+    chatRef.current.value = "";
+
+    try {
+      const res = await fetchWithAuth(token, "http://localhost:8080/users/me");
+      if (!res.ok) {
+        console.log("Error while getting user information");
+        setIsSending(false);
+        return;
+      }
+      const data: User = await res.json();
+
+      sendMessage({
+        chatroomId: target,
+        senderId: data.id,
+        action: "SEND_TEXT",
+        content: messageContent,
+      });
+      shouldScrollToBottom.current = true;
+    } catch (error) {
+      console.log("Error sending message:", error);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      handleSendMessage();
+      await handleSendMessage();
     }
+  };
+
+  const handleScroll = () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const isAtBottom =
+      container.scrollHeight - container.scrollTop <=
+      container.clientHeight + 100;
+    shouldScrollToBottom.current = isAtBottom;
   };
 
   return (
@@ -60,7 +102,11 @@ const ChatChat = ({ target }: { target: number }) => {
       <div>
         <h2 className="text-2xl mb-4">Chat</h2>
       </div>
-      <div className="flex-1 relative overflow-y-auto">
+      <div
+        className="flex-1 relative overflow-y-auto messages-container"
+        onScroll={handleScroll}
+        ref={containerRef}
+      >
         <div className="sticky top-0 bg-gradient-to-b from-white to-transparent h-2 w-full"></div>
         <div className="flex flex-col gap-4 overflow-y-auto">
           {messages.map((v, i) => (
@@ -80,6 +126,7 @@ const ChatChat = ({ target }: { target: number }) => {
               </div>
             </div>
           ))}
+          <div ref={messagesEndRef}></div>
         </div>
         <div className="sticky bottom-0 bg-gradient-to-t from-white to-transparent h-2 w-full"></div>
       </div>
