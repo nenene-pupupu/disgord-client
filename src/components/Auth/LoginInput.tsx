@@ -1,12 +1,12 @@
 import { useRef, useState } from "react";
 import { IconSky } from "@/assets/svg";
-import AlertModal from "../common/AlertModal";
 import { Link, useNavigate } from "react-router-dom";
 import { signin } from "@/services/authService";
 import { useAuth } from "@/hooks/useAuth";
+import Modal from "@components/common/Modal";
 
 const LoginInput = () => {
-  const [dialog, setDialog] = useState(false);
+  const [open, setOpen] = useState(false);
   const username = useRef<HTMLInputElement>(null);
   const password = useRef<HTMLInputElement>(null);
   const { setToken } = useAuth();
@@ -35,9 +35,31 @@ const LoginInput = () => {
     }
   };
 
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   return (
     <div>
-      <AlertModal open={dialog} setOpen={setDialog} type="ForgotPassword" />
+      <Modal
+        open={open}
+        onClose={handleClose}
+        title="Forgot Password?"
+        actions={[
+          {
+            text: "Sign up",
+            onClick: () => navigate("/register"),
+            className: "bg-red-600 text-white hover:bg-red-500 ml-3",
+          },
+          {
+            text: "Cancel",
+            onClick: handleClose,
+          },
+        ]}
+      >
+        <p className="text-md text-gray-500 text-center">
+          다시 회원가입 진행 부탁드리실게요🙏
+        </p>
+      </Modal>
 
       <div className="mx-auto w-full max-w-sm">
         <img src={IconSky} className="rounded-full mx-auto h-14 w-14" />
@@ -76,7 +98,7 @@ const LoginInput = () => {
                 </label>
                 <div className="text-sm">
                   <button
-                    onClick={() => setDialog(true)}
+                    onClick={handleOpen}
                     className="font-semibold text-sky-500 hover:text-sky-400"
                   >
                     Forgot password?
