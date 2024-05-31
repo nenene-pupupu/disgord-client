@@ -1,12 +1,12 @@
 import { IconYellow } from "@/assets/svg";
-import AlertModal from "@/components/common/AlertModal";
 import { useAuth } from "@/hooks/useAuth";
-import { getUsersMe, modUsersMe } from "@/services/profileService";
+import { delUsersMe, getUsersMe, modUsersMe } from "@/services/profileService";
+import Modal from "@components/common/Modal";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
-  const [dialog, setDialog] = useState(false);
+  const [open, setOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
@@ -41,9 +41,62 @@ export default function Profile() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!token) return;
+    if (password == "") {
+      alert("enter password");
+      return;
+    }
+    try {
+      const data = await delUsersMe(token, password);
+      console.log(data);
+      alert("delete success");
+      setToken(null);
+      navigate("/");
+    } catch (error) {
+      alert((error as Error).message);
+      setPassword("");
+      navigate("/profile");
+    }
+  };
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   return (
     <>
-      <AlertModal open={dialog} setOpen={setDialog} type="DeleteAccount" />
+      <Modal
+        open={open}
+        onClose={handleClose}
+        title="Delete Account"
+        actions={[
+          {
+            text: "Delete",
+            onClick: handleDelete,
+            className: "bg-red-600 text-white hover:bg-red-500 ml-3",
+          },
+          {
+            text: "Cancel",
+            onClick: handleClose,
+          },
+        ]}
+      >
+        <div>
+          <div className="flex item-center justify-between">
+            <label className="block text-sm font-medium text-gray-900">
+              Password
+            </label>
+          </div>
+          <div className="mt-2">
+            <input
+              type="password"
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
+              className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
+            />
+          </div>
+        </div>
+      </Modal>
 
       <div className="h-full flex justify-center items-center">
         <div className="w-1/3 h-3/4 min-w-[400px] p-12 flex flex-col items-center justify-center gap-8 shadow-xl">
@@ -120,7 +173,7 @@ export default function Profile() {
                     Logout
                   </button>
                   <button
-                    onClick={() => setDialog(true)}
+                    onClick={handleOpen}
                     className="mt-6 text-center text-sm text-gray-500 underline"
                   >
                     Delete Account
