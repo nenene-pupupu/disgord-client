@@ -1,13 +1,23 @@
+import { useAuth } from "@/hooks/useAuth";
+import { useWebSocket } from "@/hooks/useWebSocket";
 import { ImPhoneHangUp } from "react-icons/im";
 import { IoHeadset, IoMic, IoPerson, IoVideocam } from "react-icons/io5";
 
-const ChatLayout = ({
-  target,
-  setTarget,
-}: {
-  target?: number;
-  setTarget: (target: number) => void;
-}) => {
+const ChatLayout = () => {
+  const { curRoomId, sendMessage, setCurRoomId } = useWebSocket();
+  const { userId } = useAuth();
+
+  const handleExit = () => {
+    if (!userId) return;
+
+    sendMessage({
+      chatroomId: curRoomId,
+      senderId: userId,
+      action: "LEAVE_ROOM",
+    });
+    setCurRoomId(0);
+  };
+
   return (
     <div className="bg-gray-200 rounded-lg w-full flex flex-col gap-4 p-4">
       <div className="flex flex-row justify-between mt-8 mx-8">
@@ -40,9 +50,7 @@ const ChatLayout = ({
           <IoHeadset />
         </div>
         <div
-          onClick={() => {
-            setTarget(-1);
-          }}
+          onClick={handleExit}
           className="bg-red-500 text-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
         >
           <ImPhoneHangUp />

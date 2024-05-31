@@ -1,23 +1,21 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from "react";
+import { createContext, useState, useEffect, ReactNode } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { SockMessage } from "@/types";
 
 interface WebSocketContextProps {
   socket: WebSocket | null;
   messages: SockMessage[];
+  curRoomId: number;
+  targetRoomId: number;
   sendMessage: (message: SockMessage) => void;
   appendMessages: (messages: SockMessage[]) => void;
+  setCurRoomId: (id: number) => void;
+  setTargetRoomId: (id: number) => void;
 }
 
-const WebSocketContext = createContext<WebSocketContextProps | undefined>(
-  undefined,
-);
+export const WebSocketContext = createContext<
+  WebSocketContextProps | undefined
+>(undefined);
 
 export const WebSocketProvider = ({
   url,
@@ -26,9 +24,11 @@ export const WebSocketProvider = ({
   url: string;
   children: ReactNode;
 }) => {
-  const { token } = useAuth();
+  const { token, userId } = useAuth();
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [messages, setMessages] = useState<SockMessage[]>([]);
+  const [curRoomId, setCurRoomId] = useState<number>(0);
+  const [targetRoomId, setTargetRoomId] = useState<number>(0);
 
   useEffect(() => {
     if (token) {
@@ -38,7 +38,6 @@ export const WebSocketProvider = ({
 
       ws.onopen = () => {
         console.log("WebSocket is open now.");
-        ws.send(JSON.stringify({ type: "AUTH", token }));
       };
 
       ws.onmessage = (event) => {
@@ -53,7 +52,18 @@ export const WebSocketProvider = ({
         }
       };
 
-      ws.onclose = (event) => {
+      ws.onclose = async (event) => {
+        console.log("closing websocket");
+        if (token) {
+          ws.send(
+            JSON.stringify({
+              chatroomId: curRoomId,
+              senderId: userId,
+              action: "LEAVE_ROOM",
+            }),
+          );
+        }
+
         console.log("WebSocket is closed now:", event);
       };
 
@@ -88,17 +98,18 @@ export const WebSocketProvider = ({
 
   return (
     <WebSocketContext.Provider
-      value={{ socket, messages, sendMessage, appendMessages }}
+      value={{
+        socket,
+        messages,
+        curRoomId,
+        targetRoomId,
+        sendMessage,
+        appendMessages,
+        setCurRoomId,
+        setTargetRoomId,
+      }}
     >
       {children}
     </WebSocketContext.Provider>
   );
-};
-
-export const useWebSocket = () => {
-  const context = useContext(WebSocketContext);
-  if (context === undefined) {
-    throw new Error("useWebSocket must be used within a WebSocketProvider");
-  }
-  return context;
 };

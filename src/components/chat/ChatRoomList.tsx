@@ -14,16 +14,17 @@ import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { useAuth } from "@/hooks/useAuth";
 import Modal from "@components/common/Modal";
 import { Chatroom } from "@/types";
+import { useWebSocket } from "@/hooks/useWebSocket";
 
-const ChatRoomList = ({
-  target,
-  setTarget,
-}: {
-  target?: number;
-  setTarget: (target: number) => void;
-}) => {
-  const { token } = useAuth();
-
+const ChatRoomList = () => {
+  const { token, userId } = useAuth();
+  const {
+    curRoomId,
+    targetRoomId,
+    setCurRoomId,
+    setTargetRoomId,
+    sendMessage,
+  } = useWebSocket();
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
   const [name, setName] = useState("");
@@ -46,21 +47,63 @@ const ChatRoomList = ({
   };
 
   const handleEnter = async (id: number) => {
-    if (!token) return;
-    setTarget(id);
-    const res = await fetchWithAuth(
-      token,
-      `http://localhost:8080/chatrooms/${id}/join`,
-      {
-        method: "POST",
-      },
-    );
-    if (!res.ok) {
-      console.log("err");
-      return;
+    console.log(token, userId, curRoomId);
+    if (!token || !userId) return;
+    if (curRoomId !== 0) {
+      sendMessage({
+        chatroomId: curRoomId,
+        senderId: userId,
+        action: "LEAVE_ROOM",
+      });
     }
-    const data = await res.json();
-    console.log("Enter data", data);
+    setCurRoomId(id);
+
+    console.log("joining", id);
+
+    try {
+      const res = await fetchWithAuth(
+        token,
+        `http://localhost:8080/chatrooms/${id}/join`,
+        {
+          method: "POST",
+        },
+      );
+      console.log("res", res);
+
+      if (!res.ok) {
+        console.log("err");
+        return;
+      }
+
+      const data = await res.json();
+      console.log("Enter data", data);
+
+      // Fetch the messages for the new chatroom and update the state
+      // const messagesRes = await fetchWithAuth(
+      //   token,
+      //   `http://localhost:8080/chats?chatroomId=${id}`,
+      // );
+      // if (messagesRes.ok) {
+      //   const messages = await messagesRes.json();
+      //   appendMessages(messages); // Assuming you have a function to append messages to the state
+      // }
+    } catch (error) {
+      console.error("Error in handleEnter", error);
+    }
+    // const res = await fetchWithAuth(
+    //   token,
+    //   `http://localhost:8080/chatrooms/${id}/join`,
+    //   {
+    //     method: "POST",
+    //   },
+    // );
+    // // console.log("res", res);
+    // if (!res.ok) {
+    //   console.log("err");
+    //   return;
+    // }
+    // const data = await res.json();
+    // console.log("Enter data", data);
   };
 
   const handleCreate = async () => {
@@ -80,10 +123,10 @@ const ChatRoomList = ({
   };
 
   const handleDelete = async () => {
-    console.log(target);
-    if (!token || !target) return;
+    console.log();
+    if (!token || !targetRoomId) return;
     try {
-      await delChatroom(token, target);
+      await delChatroom(token, targetRoomId);
       fetchChatrooms();
       // alert("Deleted successfully");
     } catch (error) {
@@ -93,9 +136,9 @@ const ChatRoomList = ({
   };
 
   const handleModify = async () => {
-    if (!token || !target) return;
+    if (!token || !targetRoomId) return;
     try {
-      await modChatroom(token, target, name, password);
+      await modChatroom(token, targetRoomId, name, password);
       fetchChatrooms();
       // alert("Modified successfully");
     } catch (error) {
@@ -217,7 +260,7 @@ const ChatRoomList = ({
               key={chatRoom.id}
               className={
                 "flex items-center gap-x-4 py-5 px-2 rounded-md " +
-                (target === chatRoom.id && "bg-gray-100")
+                (curRoomId === chatRoom.id && "bg-gray-100")
               }
             >
               <div className="flex items-center w-40 gap-x-4">
@@ -243,7 +286,7 @@ const ChatRoomList = ({
                 {chatRoom.ownerId && (
                   <button
                     onClick={() => {
-                      setTarget(chatRoom.id);
+                      setTargetRoomId(chatRoom.id);
                       setName(chatRoom.name);
                       handleModifyOpen();
                     }}

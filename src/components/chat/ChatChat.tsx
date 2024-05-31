@@ -1,14 +1,14 @@
 import { IconSky } from "@/assets/svg";
-import { useWebSocket } from "@/contexts/WebSocketContext";
 import { useAuth } from "@/hooks/useAuth";
+import { useWebSocket } from "@/hooks/useWebSocket";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
-import { SockMessage, User } from "@/types";
+import { SockMessage } from "@/types";
 import { useEffect, useRef, useState } from "react";
 
-const ChatChat = ({ target }: { target: number }) => {
-  const { token } = useAuth();
+const ChatChat = () => {
+  const { token, userId } = useAuth();
   const chatRef = useRef<HTMLInputElement>(null);
-  const { messages, sendMessage, appendMessages } = useWebSocket();
+  const { messages, curRoomId, sendMessage, appendMessages } = useWebSocket();
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -16,10 +16,10 @@ const ChatChat = ({ target }: { target: number }) => {
 
   useEffect(() => {
     const getChat = async () => {
-      if (!token || !target) return;
+      if (!token || !curRoomId) return;
       const res = await fetchWithAuth(
         token,
-        `http://localhost:8080/chats?chatroomId=${target}`,
+        `http://localhost:8080/chats?chatroomId=${curRoomId}`,
       );
       if (!res.ok) {
         throw new Error("Failed to fetch chat messages");
@@ -30,7 +30,7 @@ const ChatChat = ({ target }: { target: number }) => {
       scrollToBottom();
     };
     getChat();
-  }, [token, target]);
+  }, [token, curRoomId]);
 
   useEffect(() => {
     if (shouldScrollToBottom.current) {
@@ -46,7 +46,7 @@ const ChatChat = ({ target }: { target: number }) => {
     if (isSending) return;
     setIsSending(true);
 
-    if (!token) {
+    if (!token || !userId) {
       setIsSending(false);
       return;
     }
@@ -58,17 +58,9 @@ const ChatChat = ({ target }: { target: number }) => {
     chatRef.current.value = "";
 
     try {
-      const res = await fetchWithAuth(token, "http://localhost:8080/users/me");
-      if (!res.ok) {
-        console.log("Error while getting user information");
-        setIsSending(false);
-        return;
-      }
-      const data: User = await res.json();
-
       sendMessage({
-        chatroomId: target,
-        senderId: data.id,
+        chatroomId: curRoomId,
+        senderId: userId,
         action: "SEND_TEXT",
         content: messageContent,
       });

@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { signin } from "@/services/authService";
 import { useAuth } from "@/hooks/useAuth";
 import Modal from "@components/common/Modal";
+// import { fetchWithAuth } from "@/services/fetchWithAuth";
 
 const LoginInput = () => {
   const [open, setOpen] = useState(false);
@@ -25,7 +26,6 @@ const LoginInput = () => {
 
       const { accessToken } = data;
       setToken(accessToken);
-      localStorage.setItem("accessToken", accessToken);
       alert("Welcome");
       navigate("/");
     } catch (error) {
