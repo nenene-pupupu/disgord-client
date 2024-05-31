@@ -41,6 +41,16 @@ export const useChatrooms = () => {
   return { data, error, loading };
 };
 
+export const getChatrooms = async (token: string) => {
+  const res = await fetchWithAuth(token, "http://localhost:8080/chatrooms");
+  if (res.status != 200) {
+    const errorData = await res.json();
+    throw new Error(errorData.message);
+  }
+  const data: Chatroom[] = await res.json();
+  return data;
+};
+
 export const addChatroom = async (
   token: string,
   name: string,
@@ -53,8 +63,9 @@ export const addChatroom = async (
       "Content-Type": "application/json",
     },
   });
-  if (!res.ok) {
-    throw new Error("Failed to create chatroom");
+  if (res.status != 201) {
+    const errorData = await res.json();
+    throw new Error(errorData.message);
   }
   const data: Chatroom = await res.json();
   return data;
@@ -71,8 +82,9 @@ export const delChatroom = async (token: string, target: number) => {
       },
     },
   );
-  if (!res.ok) {
-    throw new Error("Failed to delete chatroom");
+  if (res.status != 204) {
+    const errorData = await res.json();
+    throw new Error(errorData.message);
   }
   return true;
 };
@@ -97,8 +109,9 @@ export const modChatroom = async (
       },
     },
   );
-  if (!res.ok) {
-    throw new Error("Failed to delete chatroom");
+  if (res.status != 200) {
+    const errorData = await res.json();
+    throw new Error(errorData.message);
   }
   const data: Chatroom = await res.json();
   return data;

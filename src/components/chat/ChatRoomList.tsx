@@ -1,13 +1,19 @@
 import { IconSky } from "@/assets/svg";
 import { IoAdd, IoLockClosed } from "react-icons/io5";
 import Tooltip from "@components/common/Tooltip";
-import { useState } from "react";
-import RoomModal from "./RoomModal";
+import { useEffect, useState } from "react";
 import { MdChevronRight } from "react-icons/md";
 import { IoCreateOutline } from "react-icons/io5";
-import { useChatrooms } from "@/services/chatService";
+import {
+  addChatroom,
+  delChatroom,
+  getChatrooms,
+  modChatroom,
+} from "@/services/chatService";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { useAuth } from "@/hooks/useAuth";
+import Modal from "@components/common/Modal";
+import { Chatroom } from "@/types";
 
 const ChatRoomList = ({
   target,
@@ -16,10 +22,28 @@ const ChatRoomList = ({
   target?: number;
   setTarget: (target: number) => void;
 }) => {
-  const [openModal, setOpenModal] = useState(false);
-  const [type, setType] = useState("");
   const { token } = useAuth();
-  const { data: chatrooms } = useChatrooms();
+
+  const [open, setOpen] = useState(false);
+  const [type, setType] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [chatrooms, setChatrooms] = useState<Chatroom[] | null>(null);
+
+  useEffect(() => {
+    fetchChatrooms();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchChatrooms = async () => {
+    if (!token) return;
+    try {
+      const res: Chatroom[] = await getChatrooms(token);
+      setChatrooms(res);
+    } catch (error) {
+      alert((error as Error).message);
+    }
+  };
 
   const handleEnter = async (id: number) => {
     if (!token) return;
@@ -38,32 +62,138 @@ const ChatRoomList = ({
     const data = await res.json();
     console.log("Enter data", data);
   };
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
 
-  // if (error) {
-  //   return <div>Error: {error}</div>;
-  // }
+  const handleCreate = async () => {
+    if (!token) return;
+    if (name == "") {
+      alert("Enter channel name");
+      return;
+    }
+    try {
+      const res: Chatroom = await addChatroom(token, name, password);
+      console.log(res);
+      fetchChatrooms();
+    } catch (error) {
+      alert((error as Error).message);
+    }
+    handleClose();
+  };
+
+  const handleDelete = async () => {
+    console.log(target);
+    if (!token || !target) return;
+    try {
+      await delChatroom(token, target);
+      fetchChatrooms();
+      // alert("Deleted successfully");
+    } catch (error) {
+      alert((error as Error).message);
+    }
+    handleClose();
+  };
+
+  const handleModify = async () => {
+    if (!token || !target) return;
+    try {
+      await modChatroom(token, target, name, password);
+      fetchChatrooms();
+      // alert("Modified successfully");
+    } catch (error) {
+      alert((error as Error).message);
+    }
+    handleClose();
+  };
+
+  const handleClose = () => {
+    setName("");
+    setPassword("");
+    setOpen(false);
+  };
+  const handleAddOpen = () => {
+    setOpen(true);
+    setType("add");
+  };
+  const handleModifyOpen = () => {
+    setOpen(true);
+    setType("modify");
+  };
 
   return (
     <div className="flex flex-col">
-      <RoomModal
-        target={target}
-        type={type}
-        open={openModal}
-        setOpen={setOpenModal}
-      />
+      <Modal
+        open={open}
+        onClose={handleClose}
+        title={type == "add" ? "Create New Channel" : "Modify Channel"}
+        actions={
+          type == "add"
+            ? [
+                {
+                  text: "Create",
+                  onClick: handleCreate,
+                  className: "bg-blue-500 text-white hover:bg-blue-400 ml-3",
+                },
+                { text: "Cancle", onClick: handleClose },
+              ]
+            : [
+                {
+                  text: "Modify",
+                  onClick: handleModify,
+                  className: "bg-red-600 text-white hover:bg-red-500 ml-3",
+                },
+                { text: "Cancel", onClick: handleClose },
+                {
+                  text: "Channel Delete",
+                  onClick: handleDelete,
+                  className:
+                    "border-none shadow-none font-normal text-gray-400 text-sm mr-auto underline",
+                },
+              ]
+        }
+      >
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-900">
+              Channel name
+            </label>
+            <div className="mt-2">
+              <input
+                name="id"
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter channel name"
+                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="flex item-center justify-between">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-900"
+              >
+                Password
+              </label>
+            </div>
+            <div className="mt-2">
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password (optional)"
+                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
 
       <div className="flex mt-4 mb-2">
         <h2 className="text-2xl flex-auto">Channels</h2>
         <Tooltip message="Add Room">
-          <button
-            onClick={() => {
-              setType("add");
-              setOpenModal(true);
-            }}
-          >
+          <button onClick={handleAddOpen}>
             <IoAdd className="h-8 w-8 text-gray-400" />
           </button>
         </Tooltip>
@@ -113,9 +243,9 @@ const ChatRoomList = ({
                 {chatRoom.ownerId && (
                   <button
                     onClick={() => {
-                      setType("modify");
                       setTarget(chatRoom.id);
-                      setOpenModal(true);
+                      setName(chatRoom.name);
+                      handleModifyOpen();
                     }}
                   >
                     <IoCreateOutline className="h-6 w-6 text-gray-400 font-thin" />
