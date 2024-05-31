@@ -23,8 +23,9 @@ const Modal = ({ open, onClose, title, children, actions }: ModalProp) => {
               <div className="mt-6 mx-auto w-full max-w-sm">{children}</div>
             </div>
             <div className="bg-gray-100 px-6 py-3 flex flex-row-reverse ">
-              {actions.map((action) => (
+              {actions.map((action, i) => (
                 <button
+                  key={i}
                   onClick={action.onClick}
                   className={`justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm ${action.className || "bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"} `}
                 >
