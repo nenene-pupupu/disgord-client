@@ -12,9 +12,7 @@ const LoginInput = () => {
   const { setToken } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (password.current?.value === "" || username.current?.value === "")
       return;
@@ -68,7 +66,7 @@ const LoginInput = () => {
         </h2>
       </div>
       <div className="mt-8 mx-auto w-full max-w-sm">
-        <form className="space-y-6" method="POST">
+        <form className="space-y-6" method="POST" onSubmit={handleLogin}>
           <div>
             <label
               htmlFor="email"
@@ -119,8 +117,7 @@ const LoginInput = () => {
 
           <div>
             <button
-              // type="submit"
-              onClick={handleLogin}
+              type="submit"
               className="flex w-full justify-center rounded-md bg-sky-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
             >
               Sign in

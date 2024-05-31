@@ -9,9 +9,7 @@ const RegisterInput = () => {
   const displayname = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
-  const handleRegister = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (
       password.current?.value === "" ||
@@ -21,7 +19,7 @@ const RegisterInput = () => {
       return;
 
     try {
-      const data = await signup(
+      await signup(
         username.current!.value,
         password.current!.value,
         displayname.current!.value,
@@ -43,10 +41,15 @@ const RegisterInput = () => {
         </h2>
       </div>
       <div className="mt-8 mx-auto w-full max-w-sm">
-        <form className="space-y-6" action="#" method="POST">
+        <form
+          className="space-y-6"
+          action="#"
+          method="POST"
+          onSubmit={handleRegister}
+        >
           <div>
             <label
-              htmlFor="email"
+              htmlFor="username"
               className="block text-sm font-medium text-gray-900"
             >
               User name
@@ -88,7 +91,7 @@ const RegisterInput = () => {
 
           <div>
             <label
-              htmlFor="email"
+              htmlFor="displayname"
               className="block text-sm font-medium text-gray-900"
             >
               Display name
@@ -106,7 +109,6 @@ const RegisterInput = () => {
 
           <div>
             <button
-              onClick={handleRegister}
               type="submit"
               className="flex w-full justify-center rounded-md bg-sky-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500"
             >
