@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { signin } from "@/services/authService";
 import { useAuth } from "@/hooks/useAuth";
 import Modal from "@components/common/Modal";
-// import { fetchWithAuth } from "@/services/fetchWithAuth";
 
 const LoginInput = () => {
   const [open, setOpen] = useState(false);
@@ -33,7 +32,10 @@ const LoginInput = () => {
     }
   };
 
-  const handleOpen = () => setOpen(true);
+  const handleOpen = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault(); // 기본 동작을 막기 위해 이벤트를 막음
+    setOpen(true);
+  };
   const handleClose = () => setOpen(false);
 
   return (
@@ -95,12 +97,12 @@ const LoginInput = () => {
                   Password
                 </label>
                 <div className="text-sm">
-                  <button
+                  <div
                     onClick={handleOpen}
-                    className="font-semibold text-sky-500 hover:text-sky-400"
+                    className="font-semibold text-sky-500 hover:text-sky-400 cursor-pointer"
                   >
                     Forgot password?
-                  </button>
+                  </div>
                 </div>
               </div>
               <div className="mt-2">
