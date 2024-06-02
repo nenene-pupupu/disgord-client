@@ -1,7 +1,9 @@
 import { IconYellow } from "@/assets/svg";
+import { tokenAtom } from "@/atoms/Auth";
 import { useAuth } from "@/hooks/useAuth";
 import { delUsersMe, getUsersMe, modUsersMe } from "@/services/profileService";
 import Modal from "@components/common/Modal";
+import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -11,10 +13,15 @@ export default function Profile() {
   const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
 
-  const { setToken, token } = useAuth();
+  const token = useAtomValue(tokenAtom);
+
+  const {
+    setTokenState,
+    // , token
+  } = useAuth();
   const navigate = useNavigate();
   const handleLogout = () => {
-    setToken(null);
+    setTokenState(null);
     navigate("/");
   };
 
@@ -51,7 +58,7 @@ export default function Profile() {
       const data = await delUsersMe(token, password);
       console.log(data);
       alert("delete success");
-      setToken(null);
+      setTokenState(null);
       navigate("/");
     } catch (error) {
       alert((error as Error).message);

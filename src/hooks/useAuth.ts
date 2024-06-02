@@ -1,11 +1,57 @@
 // src/hooks/useAuth.ts
-import { useContext } from "react";
-import { AuthContext } from "@/contexts/AuthContext";
+
+import { tokenAtom, userIdAtom } from "@/atoms/Auth";
+import { fetchWithAuth } from "@/services/fetchWithAuth";
+import { User } from "@/types";
+import { useAtom } from "jotai";
+import { useEffect } from "react";
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
+  const [token, setToken] = useAtom(tokenAtom);
+  const [userId, setUserId] = useAtom(userIdAtom);
+
+  const setTokenState = async (token: string | null) => {
+    if (token) {
+      localStorage.setItem("accessToken", token);
+      const res = await fetchWithAuth(token, "http://localhost:8080/users/me");
+      const me: User = await res.json();
+      setUserIdState(me.id);
+    } else {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("userId");
+      setUserIdState(undefined);
+    }
+    setToken(token);
+  };
+
+  const setUserIdState = (id: number | undefined) => {
+    if (id !== undefined) {
+      localStorage.setItem("userId", id.toString());
+    } else {
+      localStorage.removeItem("userId");
+    }
+    setUserId(id);
+  };
+
+  useEffect(() => {
+    if (token && userId === undefined) {
+      (async () => {
+        const res = await fetchWithAuth(
+          token,
+          "http://localhost:8080/users/me",
+        );
+        const me: User = await res.json();
+        setUserIdState(me.id);
+      })();
+    }
+  }, [token, userId]);
+
+  return { setTokenState, setUserIdState };
+
+  // const value = { token, setToken, userId, setUserId };
+  // const context = useContext(AuthContext);
+  // if (!context) {
+  //   throw new Error("useAuth must be used within an AuthProvider");
+  // }
+  // return context;
 };

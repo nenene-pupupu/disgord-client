@@ -1,12 +1,15 @@
-import { Link } from "react-router-dom";
-import { HiHome } from "react-icons/hi";
-import { IoChatbox } from "react-icons/io5";
-import { IoPerson } from "react-icons/io5";
+import { tokenAtom } from "@/atoms/Auth";
+import { useAtomValue } from "jotai";
 import { FaSignInAlt } from "react-icons/fa";
-import { useAuth } from "@/hooks/useAuth";
+import { HiHome } from "react-icons/hi";
+import { IoChatbox, IoPerson } from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
-  const { token } = useAuth();
+  // const { token } = useAuth();
+
+  const token = useAtomValue(tokenAtom);
+
   return (
     <nav>
       <ul className="flex flex-col gap-10 jusitfy-center items-center">
