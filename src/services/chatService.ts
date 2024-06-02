@@ -1,5 +1,5 @@
 // services/chatService.ts
-import { tokenAtom } from "@/atoms/Auth";
+import { tokenAtom } from "@/atoms/AuthAtom";
 import { Chatroom } from "@/types/chatroom";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";

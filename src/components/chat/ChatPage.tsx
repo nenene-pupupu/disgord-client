@@ -1,6 +1,5 @@
-import { tokenAtom } from "@/atoms/Auth";
+import { tokenAtom } from "@/atoms/AuthAtom";
 import { curRoomIdAtom } from "@/atoms/WebSocketAtom";
-// import { useWebSocket } from "@/hooks/useWebSocket";
 import ChatChat from "@components/chat/ChatChat";
 import ChatEnter from "@components/chat/ChatEnter";
 import ChatLayout from "@components/chat/ChatLayout";
@@ -10,9 +9,6 @@ import ChatRoomList from "@components/chat/ChatRoomList";
 import { useAtomValue } from "jotai";
 
 const ChatPage = () => {
-  // const { token } = useAuth();
-  // const { curRoomId } = useWebSocket();
-
   const token = useAtomValue(tokenAtom);
   const curRoomId = useAtomValue(curRoomIdAtom);
 

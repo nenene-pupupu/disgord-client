@@ -1,34 +1,21 @@
-import { tokenAtom, userIdAtom } from "@/atoms/Auth";
+import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
 import {
   curRoomIdAtom,
   messagesAtom,
   socketAtom,
   targetRoomIdAtom,
 } from "@/atoms/WebSocketAtom";
-import { SockMessage } from "@/types";
-import { useAtom, useAtomValue } from "jotai";
+import { SockMessage, sockClient } from "@/types";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
-
-// interface WebSocketContextProps {
-//   socket: WebSocket | null;
-//   messages: SockMessage[];
-//   curRoomId: number;
-//   targetRoomId: number;
-//   sendMessage: (message: SockMessage) => void;
-//   appendMessages: (messages: SockMessage[]) => void;
-//   setCurRoomId: (id: number) => void;
-//   setTargetRoomId: (id: number) => void;
-// }
 
 const URL = "ws://localhost:8080/ws";
 
 export const useWebSocket = () => {
-  // const { token, userId } = useAuth();
   const [socket, setSocket] = useAtom(socketAtom);
-  const [messages, setMessages] = useAtom(messagesAtom);
+  const setMessages = useSetAtom(messagesAtom);
   const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
-  const [targetRoomId, setTargetRoomId] = useAtom(targetRoomIdAtom);
-
+  const setTargetRoomId = useSetAtom(targetRoomIdAtom);
   const token = useAtomValue(tokenAtom);
   const userId = useAtomValue(userIdAtom);
 
@@ -48,6 +35,8 @@ export const useWebSocket = () => {
           const message: SockMessage = JSON.parse(event.data);
           if (message.action === "SEND_TEXT") {
             setMessages((prev) => [...prev, message]);
+          } else if (message.action === "JOIN_ROOM") {
+            console.log(message.senderId, "join in room", message.chatroomId);
           }
         } catch (error) {
           console.error("Failed to parse message:", event.data);
@@ -82,6 +71,15 @@ export const useWebSocket = () => {
     }
   }, [token]);
 
+  const addParticipant = (client: sockClient) => {
+    if (socket) {
+      console.log("Adding client:", client);
+      socket.send(JSON.stringify(client));
+    } else {
+      console.error("WebSocket is not connected.");
+    }
+  };
+
   const sendMessage = (message: SockMessage) => {
     if (socket) {
       console.log("Sending message:", message);
@@ -99,21 +97,10 @@ export const useWebSocket = () => {
   };
 
   return {
-    socket,
-    messages,
-    curRoomId,
-    targetRoomId,
     sendMessage,
     appendMessages,
     setCurRoomId,
     setTargetRoomId,
+    addParticipant,
   };
 };
-
-// export const useWebSocket = () => {
-//   const context = useContext(WebSocketContext);
-//   if (context === undefined) {
-//     throw new Error("useWebSocket must be used within a WebSocketProvider");
-//   }
-//   return context;
-// };

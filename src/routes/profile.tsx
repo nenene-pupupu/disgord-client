@@ -1,5 +1,5 @@
 import { IconYellow } from "@/assets/svg";
-import { tokenAtom } from "@/atoms/Auth";
+import { tokenAtom } from "@/atoms/AuthAtom";
 import { useAuth } from "@/hooks/useAuth";
 import { delUsersMe, getUsersMe, modUsersMe } from "@/services/profileService";
 import Modal from "@components/common/Modal";

@@ -1,4 +1,4 @@
-import { tokenAtom } from "@/atoms/Auth";
+import { tokenAtom } from "@/atoms/AuthAtom";
 import { useAtomValue } from "jotai";
 import { FaSignInAlt } from "react-icons/fa";
 import { HiHome } from "react-icons/hi";

@@ -1,5 +1,5 @@
 // hooks/useFetchWithAuth.ts
-import { tokenAtom } from "@/atoms/Auth";
+import { tokenAtom } from "@/atoms/AuthAtom";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";

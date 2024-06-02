@@ -1,5 +1,5 @@
 import { IconSky } from "@/assets/svg";
-import { tokenAtom, userIdAtom } from "@/atoms/Auth";
+import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
 import { curRoomIdAtom, targetRoomIdAtom } from "@/atoms/WebSocketAtom";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import {
@@ -8,7 +8,6 @@ import {
   getChatrooms,
   modChatroom,
 } from "@/services/chatService";
-import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { Chatroom } from "@/types";
 import Modal from "@components/common/Modal";
 import Tooltip from "@components/common/Tooltip";
@@ -18,7 +17,6 @@ import { IoAdd, IoCreateOutline, IoLockClosed } from "react-icons/io5";
 import { MdChevronRight } from "react-icons/md";
 
 const ChatRoomList = () => {
-  // const { token, userId } = useAuth();
   const { sendMessage } = useWebSocket();
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
@@ -61,36 +59,35 @@ const ChatRoomList = () => {
 
     console.log("joining", id);
 
-    try {
-      const res = await fetchWithAuth(
-        token,
-        `http://localhost:8080/chatrooms/${id}/join`,
-        {
-          method: "POST",
-        },
-      );
-      console.log("res", res);
+    // try {
+    //   const res = await fetchWithAuth(
+    //     token,
+    //     `http://localhost:8080/chatrooms/${id}/join`,
+    //     {
+    //       method: "POST",
+    //     },
+    //   );
+    //   console.log("res", res);
 
-      if (!res.ok) {
-        console.log("err");
-        return;
-      }
+    //   if (!res.ok) {
+    //     console.log("err");
+    //     return;
+    //   }
 
-      const data = await res.json();
-      console.log("Enter data", data);
-
-      // Fetch the messages for the new chatroom and update the state
-      // const messagesRes = await fetchWithAuth(
-      //   token,
-      //   `http://localhost:8080/chats?chatroomId=${id}`,
-      // );
-      // if (messagesRes.ok) {
-      //   const messages = await messagesRes.json();
-      //   appendMessages(messages); // Assuming you have a function to append messages to the state
-      // }
-    } catch (error) {
-      console.error("Error in handleEnter", error);
-    }
+    //   const data = await res.json();
+    //   console.log("Enter data", data);
+    //   // Fetch the messages for the new chatroom and update the state
+    //   // const messagesRes = await fetchWithAuth(
+    //   //   token,
+    //   //   `http://localhost:8080/chats?chatroomId=${id}`,
+    //   // );
+    //   // if (messagesRes.ok) {
+    //   //   const messages = await messagesRes.json();
+    //   //   appendMessages(messages); // Assuming you have a function to append messages to the state
+    //   // }
+    // } catch (error) {
+    //   console.error("Error in handleEnter", error);
+    // }
     // const res = await fetchWithAuth(
     //   token,
     //   `http://localhost:8080/chatrooms/${id}/join`,

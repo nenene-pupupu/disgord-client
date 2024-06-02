@@ -1,4 +1,4 @@
-import { userIdAtom } from "@/atoms/Auth";
+import { userIdAtom } from "@/atoms/AuthAtom";
 import { curRoomIdAtom } from "@/atoms/WebSocketAtom";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { useAtom, useAtomValue } from "jotai";
@@ -7,11 +7,8 @@ import { IoHeadset, IoMic, IoPerson, IoVideocam } from "react-icons/io5";
 
 const ChatLayout = () => {
   const { sendMessage } = useWebSocket();
-  // const { curRoomId, sendMessage, setCurRoomId } = useWebSocket();
-  // const { userId } = useAuth();
 
   const userId = useAtomValue(userIdAtom);
-
   const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
 
   const handleExit = () => {

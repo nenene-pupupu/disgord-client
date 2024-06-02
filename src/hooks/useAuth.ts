@@ -1,6 +1,6 @@
 // src/hooks/useAuth.ts
 
-import { tokenAtom, userIdAtom } from "@/atoms/Auth";
+import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { User } from "@/types";
 import { useAtom } from "jotai";

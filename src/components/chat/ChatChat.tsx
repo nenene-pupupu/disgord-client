@@ -1,5 +1,5 @@
 import { IconSky } from "@/assets/svg";
-import { tokenAtom, userIdAtom } from "@/atoms/Auth";
+import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
 import { curRoomIdAtom, messagesAtom } from "@/atoms/WebSocketAtom";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
@@ -8,13 +8,8 @@ import { useAtomValue } from "jotai";
 import { useEffect, useRef, useState } from "react";
 
 const ChatChat = () => {
-  // const { token, userId } = useAuth();
   const chatRef = useRef<HTMLInputElement>(null);
-  const {
-    // messages, curRoomId,
-    sendMessage,
-    appendMessages,
-  } = useWebSocket();
+  const { sendMessage, appendMessages } = useWebSocket();
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -42,6 +37,7 @@ const ChatChat = () => {
       scrollToBottom();
     };
     getChat();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, curRoomId]);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { tokenAtom } from "@/atoms/Auth";
+import { tokenAtom } from "@/atoms/AuthAtom";
 import { curRoomIdAtom } from "@/atoms/WebSocketAtom";
 import ChatChat from "@components/chat/ChatChat";
 import ChatEnter from "@components/chat/ChatEnter";
@@ -32,9 +32,4 @@ export default function Chat() {
       )}
     </div>
   );
-  // return (
-  // <WebSocketProvider url="ws://localhost:8080/ws">
-  //   <ChatPage />
-  // </WebSocketProvider>
-  // );
 }
