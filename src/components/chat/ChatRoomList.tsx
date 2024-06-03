@@ -23,9 +23,8 @@ const ChatRoomList = () => {
     targetRoomId,
     setCurRoomId,
     setTargetRoomId,
-    sendMessage,
+    changeRoom,
     startCall,
-    endCall,
   } = useWebSocket();
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
@@ -65,20 +64,13 @@ const ChatRoomList = () => {
   const handleEnter = async (id: number) => {
     if (!token || !userId) return;
     if (curRoomId !== 0) {
-      sendMessage({
-        chatroomId: curRoomId,
-        senderId: userId,
-        action: "LEAVE_ROOM",
-        content: "",
-      });
-      endCall();
+      await changeRoom(id);
+    } else {
+      setCurRoomId(id);
+      await startCall();
     }
 
-    setCurRoomId(id);
-
     try {
-      await startCall(); // Start the WebRTC call when entering the room
-
       await joinRoom(id);
     } catch (error) {
       console.error("Error in handleEnter", error);

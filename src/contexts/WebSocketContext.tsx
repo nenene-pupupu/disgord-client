@@ -14,6 +14,7 @@ interface WebSocketContextProps {
   localStream: MediaStream | null;
   remoteStreams: MediaStream[];
   startCall: () => void;
+  changeRoom: (newRoomId: number) => void;
   endCall: () => void;
   audioOn: boolean;
   videoOn: boolean;
@@ -211,6 +212,52 @@ export const WebSocketProvider = ({
     return pc.current;
   };
 
+  const changeRoom = async (newRoomId: number) => {
+    sendMessage({
+      chatroomId: curRoomId,
+      senderId: userId!,
+      action: "LEAVE_ROOM",
+      content: "",
+    });
+    localStream?.getTracks().forEach((track) => track.stop());
+    pc.current?.close();
+    pc.current = null;
+    setRemoteStreams([]);
+
+    setCurRoomId(newRoomId);
+
+    const stream = await getLocalStream();
+
+    if (!stream) {
+      console.error("[ERROR] Local stream is not available");
+      return null;
+    }
+
+    pc.current = new RTCPeerConnection();
+    stream.getTracks().forEach((track) => pc.current?.addTrack(track, stream));
+    setLocalStream(stream);
+
+    pc.current.ontrack = (event) => {
+      console.log("[DEBUG] ontrack()");
+      if (event.track.kind === "audio") {
+        return;
+      }
+      setRemoteStreams((prev) => [...prev, event.streams[0]]);
+    };
+
+    pc.current.onicecandidate = (event) => {
+      console.log("sending in icecandidate");
+      if (event.candidate) {
+        sendMessage({
+          chatroomId: newRoomId,
+          senderId: userId!,
+          action: "CANDIDATE",
+          content: JSON.stringify(event.candidate),
+        });
+      }
+    };
+  };
+
   const startCall = async () => {
     console.log("[DEBUG] startCall()");
 
@@ -263,6 +310,7 @@ export const WebSocketProvider = ({
         localStream,
         remoteStreams,
         startCall,
+        changeRoom,
         endCall,
         audioOn,
         videoOn,
