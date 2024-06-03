@@ -5,7 +5,6 @@ export const fetchWithAuth = async (
 ) => {
   try {
     const headers = new Headers(init?.headers || {});
-    console.log("fetchWithAuth called", token, input, init);
 
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
@@ -21,21 +20,14 @@ export const fetchWithAuth = async (
       delete init.body;
     }
 
-    console.log("fetching with options", {
-      ...init,
-      headers,
-    });
-
     const response = await fetch(input, {
       ...init,
       headers,
     });
 
-    console.log("in fetchWithAuth res", response);
-
     return response;
   } catch (error) {
     console.error("fetchWithAuth error", error);
-    throw error; // Re-throw the error after logging it
+    throw error;
   }
 };

@@ -16,13 +16,50 @@ import {
 import { MdHeadset, MdHeadsetOff } from "react-icons/md";
 
 const ChatLayout = () => {
-  const { sendMessage } = useWebSocket();
+  const {
+    sendMessage,
+    localStream,
+    remoteStreams,
+    endCall,
+    audioOn,
+    videoOn,
+    handleAudioMute,
+    handleVideoMute,
+  } = useWebSocket();
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   const [camOn, setCamOn] = useAtom(CamOnAtom);
   const [muted, setMuted] = useAtom(mutedAtom);
   const [soundOn, setSoundOn] = useAtom(soundOnAtom);
   const userId = useAtomValue(userIdAtom);
   const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
+
+  useEffect(() => {
+    if (localVideoRef.current && localStream) {
+      localVideoRef.current.srcObject = localStream;
+    }
+  }, [localStream]);
+
+  useEffect(() => {
+    remoteStreams.forEach((stream, index) => {
+      const videoElement = remoteVideoRefs.current[index];
+      if (videoElement) {
+        videoElement.srcObject = stream;
+      }
+    });
+  }, [remoteStreams]);
+
+  useEffect(() => {
+    const refs = remoteVideoRefs.current;
+    return () => {
+      refs.forEach((ref) => {
+        if (ref) {
+          ref.srcObject = null;
+        }
+      });
+    };
+  }, []);
 
   const handleExit = () => {
     if (!userId) return;
@@ -31,7 +68,9 @@ const ChatLayout = () => {
       chatroomId: curRoomId,
       senderId: userId,
       action: "LEAVE_ROOM",
+      content: "",
     });
+    endCall();
     setCurRoomId(0);
   };
 
@@ -54,26 +93,36 @@ const ChatLayout = () => {
       </div>
       <div className="flex-1 flex justify-center items-center overflow-y-auto">
         <div className="flex flex-wrap gap-4 overflow-y-auto justify-center">
-          <div className="bg-gray-500 w-96 h-60 rounded-xl"></div>
-          <div className="bg-gray-500 w-96 h-60 rounded-xl"></div>
-          <div className="bg-gray-500 w-96 h-60 rounded-xl"></div>
-          <div className="bg-gray-500 w-96 h-60 rounded-xl"></div>
+          <video
+            ref={localVideoRef}
+            autoPlay
+            muted
+            className="h-64 rounded-xl transform scale-x-[-1]"
+          ></video>
+          {remoteStreams.map((_, index) => (
+            <video
+              key={index}
+              ref={(el) => {
+                remoteVideoRefs.current[index] = el;
+              }}
+              autoPlay
+              className="h-64 rounded-xl transform scale-x-[-1]"
+            ></video>
+          ))}
         </div>
       </div>
-      <div className="flex  gap-8 justify-center">
-        <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer">
-          {muted ? (
-            <IoMicOff onClick={handleMuted} />
-          ) : (
-            <IoMic onClick={handleMuted} />
-          )}
+      <div className="flex gap-8 justify-center">
+        <div
+          onClick={handleAudioMute}
+          className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
+        >
+          {audioOn ? <IoMic /> : <IoMicOff />}
         </div>
-        <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer">
-          {camOn ? (
-            <IoVideocam onClick={handleCamOn} />
-          ) : (
-            <IoVideocamOff onClick={handleCamOn} />
-          )}
+        <div
+          onClick={handleVideoMute}
+          className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
+        >
+          {videoOn ? <IoVideocam /> : <IoVideocamOff />}
         </div>
         <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer">
           {soundOn ? (
