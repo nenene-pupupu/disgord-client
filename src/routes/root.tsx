@@ -4,7 +4,6 @@ import { Outlet } from "react-router-dom";
 
 export default function Root() {
   return (
-    // <AuthProvider>
     <Provider>
       <div className="flex">
         <Sidebar />
@@ -13,6 +12,5 @@ export default function Root() {
         </div>
       </div>
     </Provider>
-    // </AuthProvider>
   );
 }

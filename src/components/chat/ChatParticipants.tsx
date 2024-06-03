@@ -1,54 +1,9 @@
-import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
-import { curRoomIdAtom, participantsAtom } from "@/atoms/WebSocketAtom";
-import { useWebSocket } from "@/hooks/useWebSocket";
-import { fetchWithAuth } from "@/services/fetchWithAuth";
-import { sockClient } from "@/types";
-import { useAtom, useAtomValue } from "jotai";
-import { useEffect } from "react";
+import { participantsAtom } from "@/atoms/WebSocketAtom";
+import { useAtomValue } from "jotai";
 import { IoMic, IoMicOff, IoVideocam, IoVideocamOff } from "react-icons/io5";
 
 const ChatParticipants = () => {
-  const { addParticipant } = useWebSocket();
-  const token = useAtomValue(tokenAtom);
-  const userId = useAtomValue(userIdAtom);
-  const curRoomId = useAtomValue(curRoomIdAtom);
-  const [participants, setParticipants] = useAtom(participantsAtom);
-
-  useEffect(() => {
-    const getParticipants = async () => {
-      if (!token || !curRoomId) return;
-      const res = await fetchWithAuth(
-        token,
-        `http://localhost:8080/chatrooms/${curRoomId}/join`,
-        {
-          method: "POST",
-        },
-      );
-      if (!res.ok) {
-        throw new Error("Failed to fetch participants");
-      }
-      const data: sockClient[] = await res.json();
-      setParticipants(data);
-    };
-    try {
-      addParticipant({ camOn: false, muted: true, userId: userId! });
-    } catch (error) {
-      console.log("Error adding participants:", error);
-    }
-    getParticipants();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token, curRoomId]);
-
-  const toggleMute = (index: number) => {
-    setParticipants((prev) =>
-      prev!.map((p, i) => (i === index ? { ...p, muted: !p.muted } : p)),
-    );
-  };
-  const toggleCam = (index: number) => {
-    setParticipants((prev) =>
-      prev!.map((p, i) => (i === index ? { ...p, camOn: !p.camOn } : p)),
-    );
-  };
+  const participants = useAtomValue(participantsAtom);
 
   return (
     <div className="mt-4">
@@ -79,30 +34,14 @@ const ChatParticipants = () => {
                     <p>{v.userId}</p>
                   </div>
                   {v.muted ? (
-                    <IoMicOff
-                      onClick={() => toggleMute(i)}
-                      color="gray"
-                      className="cursor-pointer"
-                    />
+                    <IoMicOff color="gray" className="cursor-pointer" />
                   ) : (
-                    <IoMic
-                      onClick={() => toggleMute(i)}
-                      color="gray"
-                      className="cursor-pointer"
-                    />
+                    <IoMic color="gray" className="cursor-pointer" />
                   )}
                   {v.camOn ? (
-                    <IoVideocam
-                      onClick={() => toggleCam(i)}
-                      color="gray"
-                      className="cursor-pointer"
-                    />
+                    <IoVideocam color="gray" className="cursor-pointer" />
                   ) : (
-                    <IoVideocamOff
-                      onClick={() => toggleCam(i)}
-                      color="gray"
-                      className="cursor-pointer"
-                    />
+                    <IoVideocamOff color="gray" className="cursor-pointer" />
                   )}
                 </div>
               ))}

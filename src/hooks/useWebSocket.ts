@@ -1,5 +1,10 @@
-import { tokenAtom, userIdAtom } from "@/atoms/Auth";
-import { curRoomIdAtom, messagesAtom, socketAtom } from "@/atoms/WebSocketAtom";
+import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
+import {
+  curRoomIdAtom,
+  messagesAtom,
+  participantsAtom,
+  socketAtom,
+} from "@/atoms/WebSocketAtom";
 import { SockMessage } from "@/types";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
@@ -9,9 +14,8 @@ const URL = "ws://localhost:8080/ws";
 export const useWebSocket = () => {
   const [socket, setSocket] = useAtom(socketAtom);
   const setMessages = useSetAtom(messagesAtom);
-  // const [messages, setMessages] = useAtom(messagesAtom);
   const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
-
+  const setParticipants = useSetAtom(participantsAtom);
   const token = useAtomValue(tokenAtom);
   const userId = useAtomValue(userIdAtom);
 
@@ -40,6 +44,7 @@ export const useWebSocket = () => {
             setMessages((prev) => [...prev, message]);
           } else if (message.action === "JOIN_ROOM") {
             console.log(message.senderId, "join in room", message.chatroomId);
+            addParticipant(message.senderId);
           }
         } catch (error) {
           console.error("Failed to parse message:", event.data);
@@ -74,12 +79,16 @@ export const useWebSocket = () => {
     }
   }, [token, socket]);
 
-  const addParticipant = (client: sockClient) => {
+  const addParticipant = (id: number) => {
     if (socket) {
-      console.log("Adding client:", client);
-      socket.send(JSON.stringify(client));
-    } else {
-      console.error("WebSocket is not connected.");
+      setParticipants((prev) => [
+        ...(prev || []),
+        {
+          camOn: false,
+          muted: true,
+          userId: id,
+        },
+      ]);
     }
   };
 

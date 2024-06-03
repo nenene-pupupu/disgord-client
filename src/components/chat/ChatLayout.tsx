@@ -1,13 +1,26 @@
 import { userIdAtom } from "@/atoms/AuthAtom";
+import { CamOnAtom, mutedAtom, soundOnAtom } from "@/atoms/ParticipantAtom";
 import { curRoomIdAtom } from "@/atoms/WebSocketAtom";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { useAtom, useAtomValue } from "jotai";
 import { ImPhoneHangUp } from "react-icons/im";
-import { IoHeadset, IoMic, IoPerson, IoVideocam } from "react-icons/io5";
+import {
+  IoHeadset,
+  IoMic,
+  IoMicOff,
+  IoPerson,
+  IoVideocam,
+  IoVideocamOff,
+  IoHeadsetOutline,
+} from "react-icons/io5";
+import { MdHeadset, MdHeadsetOff } from "react-icons/md";
 
 const ChatLayout = () => {
   const { sendMessage } = useWebSocket();
 
+  const [camOn, setCamOn] = useAtom(CamOnAtom);
+  const [muted, setMuted] = useAtom(mutedAtom);
+  const [soundOn, setSoundOn] = useAtom(soundOnAtom);
   const userId = useAtomValue(userIdAtom);
   const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
 
@@ -21,6 +34,10 @@ const ChatLayout = () => {
     });
     setCurRoomId(0);
   };
+
+  const handleMuted = () => setMuted((prev: boolean) => !prev);
+  const handleCamOn = () => setCamOn((prev: boolean) => !prev);
+  const handleSoundOn = () => setSoundOn((prev: boolean) => !prev);
 
   return (
     <div className="bg-gray-200 rounded-lg w-full flex flex-col gap-4 p-4">
@@ -45,13 +62,25 @@ const ChatLayout = () => {
       </div>
       <div className="flex  gap-8 justify-center">
         <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer">
-          <IoMic />
+          {muted ? (
+            <IoMicOff onClick={handleMuted} />
+          ) : (
+            <IoMic onClick={handleMuted} />
+          )}
         </div>
         <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer">
-          <IoVideocam />
+          {camOn ? (
+            <IoVideocam onClick={handleCamOn} />
+          ) : (
+            <IoVideocamOff onClick={handleCamOn} />
+          )}
         </div>
         <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer">
-          <IoHeadset />
+          {soundOn ? (
+            <MdHeadset onClick={handleSoundOn} />
+          ) : (
+            <MdHeadsetOff onClick={handleSoundOn} />
+          )}
         </div>
         <div
           onClick={handleExit}

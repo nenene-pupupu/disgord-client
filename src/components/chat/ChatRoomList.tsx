@@ -1,6 +1,10 @@
 import { IconSky } from "@/assets/svg";
 import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
-import { curRoomIdAtom, targetRoomIdAtom } from "@/atoms/WebSocketAtom";
+import {
+  curRoomIdAtom,
+  participantsAtom,
+  targetRoomIdAtom,
+} from "@/atoms/WebSocketAtom";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import {
   addChatroom,
@@ -8,10 +12,11 @@ import {
   getChatrooms,
   modChatroom,
 } from "@/services/chatService";
-import { Chatroom } from "@/types";
+import { fetchWithAuth } from "@/services/fetchWithAuth";
+import { Chatroom, sockClient } from "@/types";
 import Modal from "@components/common/Modal";
 import Tooltip from "@components/common/Tooltip";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { IoAdd, IoCreateOutline, IoLockClosed } from "react-icons/io5";
 import { MdChevronRight } from "react-icons/md";
@@ -24,6 +29,7 @@ const ChatRoomList = () => {
   const [password, setPassword] = useState("");
   const [chatrooms, setChatrooms] = useState<Chatroom[] | null>(null);
 
+  const setParticipants = useSetAtom(participantsAtom);
   const token = useAtomValue(tokenAtom);
   const userId = useAtomValue(userIdAtom);
 
@@ -45,7 +51,7 @@ const ChatRoomList = () => {
     }
   };
 
-  const handleEnter = async (id: number) => {
+  const handleEnter = async (roomId: number) => {
     console.log(token, userId, curRoomId);
     if (!token || !userId) return;
     if (curRoomId !== 0) {
@@ -55,14 +61,14 @@ const ChatRoomList = () => {
         action: "LEAVE_ROOM",
       });
     }
-    setCurRoomId(id);
+    setCurRoomId(roomId);
 
-    console.log("joining", id);
+    console.log("joining", roomId);
 
     try {
       const res = await fetchWithAuth(
         token,
-        `http://localhost:8080/chatrooms/${id}/join`,
+        `http://localhost:8080/chatrooms/${roomId}/join`,
         {
           method: "POST",
         },
@@ -73,20 +79,21 @@ const ChatRoomList = () => {
         return;
       }
 
-      const data = await res.json();
+      const data: sockClient[] = await res.json();
       console.log("Enter data", data);
-    //   // Fetch the messages for the new chatroom and update the state
-    //   // const messagesRes = await fetchWithAuth(
-    //   //   token,
-    //   //   `http://localhost:8080/chats?chatroomId=${id}`,
-    //   // );
-    //   // if (messagesRes.ok) {
-    //   //   const messages = await messagesRes.json();
-    //   //   appendMessages(messages); // Assuming you have a function to append messages to the state
-    //   // }
-    // } catch (error) {
-    //   console.error("Error in handleEnter", error);
-    // }
+      setParticipants(data);
+      //   // Fetch the messages for the new chatroom and update the state
+      //   // const messagesRes = await fetchWithAuth(
+      //   //   token,
+      //   //   `http://localhost:8080/chats?chatroomId=${id}`,
+      //   // );
+      //   // if (messagesRes.ok) {
+      //   //   const messages = await messagesRes.json();
+      //   //   appendMessages(messages); // Assuming you have a function to append messages to the state
+      //   // }
+    } catch (error) {
+      console.error("Error in handleEnter", error);
+    }
     // const res = await fetchWithAuth(
     //   token,
     //   `http://localhost:8080/chatrooms/${id}/join`,
