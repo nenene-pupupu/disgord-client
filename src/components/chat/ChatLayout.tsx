@@ -86,7 +86,7 @@ const ChatLayout = () => {
             ref={localVideoRef}
             autoPlay
             muted
-            className="bg-gray-500 w-96 h-60 rounded-xl transform scale-x-[-1]"
+            className="h-64 rounded-xl transform scale-x-[-1]"
           ></video>
           {remoteStreams.map((_, index) => (
             <video
@@ -95,7 +95,7 @@ const ChatLayout = () => {
                 remoteVideoRefs.current[index] = el;
               }}
               autoPlay
-              className="bg-gray-500 w-96 h-60 rounded-xl transform scale-x-[-1]"
+              className="h-64 rounded-xl transform scale-x-[-1]"
             ></video>
           ))}
         </div>
