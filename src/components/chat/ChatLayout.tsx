@@ -1,11 +1,58 @@
+import { useEffect, useRef } from "react";
+import { ImPhoneHangUp } from "react-icons/im";
+import {
+  IoHeadset,
+  IoMic,
+  IoMicOff,
+  IoPerson,
+  IoVideocam,
+  IoVideocamOff,
+} from "react-icons/io5";
 import { useAuth } from "@/hooks/useAuth";
 import { useWebSocket } from "@/hooks/useWebSocket";
-import { ImPhoneHangUp } from "react-icons/im";
-import { IoHeadset, IoMic, IoPerson, IoVideocam } from "react-icons/io5";
 
 const ChatLayout = () => {
-  const { curRoomId, sendMessage, setCurRoomId } = useWebSocket();
+  const {
+    curRoomId,
+    sendMessage,
+    setCurRoomId,
+    localStream,
+    remoteStreams,
+    endCall,
+    audioOn,
+    videoOn,
+    handleAudioMute,
+    handleVideoMute,
+  } = useWebSocket();
   const { userId } = useAuth();
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+
+  useEffect(() => {
+    if (localVideoRef.current && localStream) {
+      localVideoRef.current.srcObject = localStream;
+    }
+  }, [localStream]);
+
+  useEffect(() => {
+    remoteStreams.forEach((stream, index) => {
+      const videoElement = remoteVideoRefs.current[index];
+      if (videoElement) {
+        videoElement.srcObject = stream;
+      }
+    });
+  }, [remoteStreams]);
+
+  useEffect(() => {
+    const refs = remoteVideoRefs.current;
+    return () => {
+      refs.forEach((ref) => {
+        if (ref) {
+          ref.srcObject = null;
+        }
+      });
+    };
+  }, []);
 
   const handleExit = () => {
     if (!userId) return;
@@ -14,7 +61,9 @@ const ChatLayout = () => {
       chatroomId: curRoomId,
       senderId: userId,
       action: "LEAVE_ROOM",
+      content: "",
     });
+    endCall();
     setCurRoomId(0);
   };
 
@@ -33,18 +82,36 @@ const ChatLayout = () => {
       </div>
       <div className="flex-1 flex justify-center items-center overflow-y-auto">
         <div className="flex flex-wrap gap-4 overflow-y-auto justify-center">
-          <div className="bg-gray-500 w-96 h-60 rounded-xl"></div>
-          <div className="bg-gray-500 w-96 h-60 rounded-xl"></div>
-          <div className="bg-gray-500 w-96 h-60 rounded-xl"></div>
-          <div className="bg-gray-500 w-96 h-60 rounded-xl"></div>
+          <video
+            ref={localVideoRef}
+            autoPlay
+            muted
+            className="h-64 rounded-xl transform scale-x-[-1]"
+          ></video>
+          {remoteStreams.map((_, index) => (
+            <video
+              key={index}
+              ref={(el) => {
+                remoteVideoRefs.current[index] = el;
+              }}
+              autoPlay
+              className="h-64 rounded-xl transform scale-x-[-1]"
+            ></video>
+          ))}
         </div>
       </div>
-      <div className="flex  gap-8 justify-center">
-        <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer">
-          <IoMic />
+      <div className="flex gap-8 justify-center">
+        <div
+          onClick={handleAudioMute}
+          className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
+        >
+          {audioOn ? <IoMic /> : <IoMicOff />}
         </div>
-        <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer">
-          <IoVideocam />
+        <div
+          onClick={handleVideoMute}
+          className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
+        >
+          {videoOn ? <IoVideocam /> : <IoVideocamOff />}
         </div>
         <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer">
           <IoHeadset />

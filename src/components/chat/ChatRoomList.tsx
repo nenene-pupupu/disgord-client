@@ -1,20 +1,20 @@
-import { IconSky } from "@/assets/svg";
-import { IoAdd, IoLockClosed } from "react-icons/io5";
-import Tooltip from "@components/common/Tooltip";
 import { useEffect, useState } from "react";
+import { IoAdd, IoLockClosed, IoCreateOutline } from "react-icons/io5";
 import { MdChevronRight } from "react-icons/md";
-import { IoCreateOutline } from "react-icons/io5";
+import Tooltip from "@components/common/Tooltip";
+import Modal from "@components/common/Modal";
 import {
   addChatroom,
   delChatroom,
   getChatrooms,
   modChatroom,
 } from "@/services/chatService";
-import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { useAuth } from "@/hooks/useAuth";
-import Modal from "@components/common/Modal";
-import { Chatroom } from "@/types";
 import { useWebSocket } from "@/hooks/useWebSocket";
+import { Chatroom } from "@/types";
+import { IconSky } from "@/assets/svg";
+
+const API_URL = "http://localhost:8080";
 
 const ChatRoomList = () => {
   const { token, userId } = useAuth();
@@ -23,7 +23,8 @@ const ChatRoomList = () => {
     targetRoomId,
     setCurRoomId,
     setTargetRoomId,
-    sendMessage,
+    changeRoom,
+    startCall,
   } = useWebSocket();
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
@@ -46,69 +47,39 @@ const ChatRoomList = () => {
     }
   };
 
+  const joinRoom = async (chatroomId: number) => {
+    const res = await fetch(`${API_URL}/chatrooms/${chatroomId}/join`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    if (!res.ok) {
+      console.error("Fail to join room 1");
+    }
+    const data = await res.json();
+    console.log("[INFO] Joined room", data);
+  };
+
   const handleEnter = async (id: number) => {
-    console.log(token, userId, curRoomId);
     if (!token || !userId) return;
     if (curRoomId !== 0) {
-      sendMessage({
-        chatroomId: curRoomId,
-        senderId: userId,
-        action: "LEAVE_ROOM",
-      });
+      await changeRoom(id);
+    } else {
+      setCurRoomId(id);
+      await startCall();
     }
-    setCurRoomId(id);
-
-    console.log("joining", id);
 
     try {
-      const res = await fetchWithAuth(
-        token,
-        `http://localhost:8080/chatrooms/${id}/join`,
-        {
-          method: "POST",
-        },
-      );
-      console.log("res", res);
-
-      if (!res.ok) {
-        console.log("err");
-        return;
-      }
-
-      const data = await res.json();
-      console.log("Enter data", data);
-
-      // Fetch the messages for the new chatroom and update the state
-      // const messagesRes = await fetchWithAuth(
-      //   token,
-      //   `http://localhost:8080/chats?chatroomId=${id}`,
-      // );
-      // if (messagesRes.ok) {
-      //   const messages = await messagesRes.json();
-      //   appendMessages(messages); // Assuming you have a function to append messages to the state
-      // }
+      await joinRoom(id);
     } catch (error) {
       console.error("Error in handleEnter", error);
     }
-    // const res = await fetchWithAuth(
-    //   token,
-    //   `http://localhost:8080/chatrooms/${id}/join`,
-    //   {
-    //     method: "POST",
-    //   },
-    // );
-    // // console.log("res", res);
-    // if (!res.ok) {
-    //   console.log("err");
-    //   return;
-    // }
-    // const data = await res.json();
-    // console.log("Enter data", data);
   };
 
   const handleCreate = async () => {
     if (!token) return;
-    if (name == "") {
+    if (name.trim() === "") {
       alert("Enter channel name");
       return;
     }
@@ -123,12 +94,10 @@ const ChatRoomList = () => {
   };
 
   const handleDelete = async () => {
-    console.log();
     if (!token || !targetRoomId) return;
     try {
       await delChatroom(token, targetRoomId);
       fetchChatrooms();
-      // alert("Deleted successfully");
     } catch (error) {
       alert((error as Error).message);
     }
@@ -140,7 +109,6 @@ const ChatRoomList = () => {
     try {
       await modChatroom(token, targetRoomId, name, password);
       fetchChatrooms();
-      // alert("Modified successfully");
     } catch (error) {
       alert((error as Error).message);
     }
@@ -152,10 +120,12 @@ const ChatRoomList = () => {
     setPassword("");
     setOpen(false);
   };
+
   const handleAddOpen = () => {
     setOpen(true);
     setType("add");
   };
+
   const handleModifyOpen = () => {
     setOpen(true);
     setType("modify");
@@ -166,16 +136,16 @@ const ChatRoomList = () => {
       <Modal
         open={open}
         onClose={handleClose}
-        title={type == "add" ? "Create New Channel" : "Modify Channel"}
+        title={type === "add" ? "Create New Channel" : "Modify Channel"}
         actions={
-          type == "add"
+          type === "add"
             ? [
                 {
                   text: "Create",
                   onClick: handleCreate,
                   className: "bg-blue-500 text-white hover:bg-blue-400 ml-3",
                 },
-                { text: "Cancle", onClick: handleClose },
+                { text: "Cancel", onClick: handleClose },
               ]
             : [
                 {
@@ -247,20 +217,18 @@ const ChatRoomList = () => {
         className="divide-y divide-gray-100 overflow-y-scroll w-60"
       >
         {!chatrooms || chatrooms.length === 0 ? (
-          <>
-            <p className="text-gray-400">
-              No channels here yet
-              <br />
-              Be the first to create one!
-            </p>
-          </>
+          <p className="text-gray-400">
+            No channels here yet
+            <br />
+            Be the first to create one!
+          </p>
         ) : (
           chatrooms.map((chatRoom) => (
             <li
               key={chatRoom.id}
               className={
                 "flex items-center gap-x-4 py-5 px-2 rounded-md " +
-                (curRoomId === chatRoom.id && "bg-gray-100")
+                (curRoomId === chatRoom.id ? "bg-gray-100" : "")
               }
             >
               <div className="flex items-center w-40 gap-x-4">
