@@ -9,7 +9,7 @@ const LoginInput = () => {
   const [open, setOpen] = useState(false);
   const username = useRef<HTMLInputElement>(null);
   const password = useRef<HTMLInputElement>(null);
-  const { setToken } = useAuth();
+  const { setTokenState } = useAuth();
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -24,7 +24,7 @@ const LoginInput = () => {
       );
 
       const { accessToken } = data;
-      setToken(accessToken);
+      setTokenState(accessToken);
       alert("Welcome");
       navigate("/");
     } catch (error) {

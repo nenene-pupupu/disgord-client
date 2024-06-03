@@ -1,18 +1,25 @@
 import { IconSky } from "@/assets/svg";
-import { useAuth } from "@/hooks/useAuth";
+import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
+import { curRoomIdAtom, messagesAtom } from "@/atoms/WebSocketAtom";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { SockMessage } from "@/types";
+import { useAtomValue } from "jotai";
 import { useEffect, useRef, useState } from "react";
 
 const ChatChat = () => {
-  const { token, userId } = useAuth();
   const chatRef = useRef<HTMLInputElement>(null);
-  const { messages, curRoomId, sendMessage, appendMessages } = useWebSocket();
+  const { sendMessage, appendMessages } = useWebSocket();
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const shouldScrollToBottom = useRef(true);
+
+  const token = useAtomValue(tokenAtom);
+  const userId = useAtomValue(userIdAtom);
+
+  const messages = useAtomValue(messagesAtom);
+  const curRoomId = useAtomValue(curRoomIdAtom);
 
   useEffect(() => {
     const getChat = async () => {
@@ -30,6 +37,7 @@ const ChatChat = () => {
       scrollToBottom();
     };
     getChat();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, curRoomId]);
 
   useEffect(() => {

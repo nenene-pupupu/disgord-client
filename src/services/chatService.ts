@@ -1,14 +1,17 @@
 // services/chatService.ts
-import { fetchWithAuth } from "./fetchWithAuth";
+import { tokenAtom } from "@/atoms/AuthAtom";
 import { Chatroom } from "@/types/chatroom";
-import { useAuth } from "@/hooks/useAuth";
-import { useState, useEffect } from "react";
+import { useAtomValue } from "jotai";
+import { useEffect, useState } from "react";
+import { fetchWithAuth } from "./fetchWithAuth";
 
 export const useChatrooms = () => {
-  const { token } = useAuth();
+  // const { token } = useAuth();
   const [data, setData] = useState<Chatroom[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const token = useAtomValue(tokenAtom);
 
   useEffect(() => {
     const fetchChatrooms = async () => {

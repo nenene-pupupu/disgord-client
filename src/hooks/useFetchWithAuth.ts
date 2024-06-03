@@ -1,13 +1,16 @@
 // hooks/useFetchWithAuth.ts
-import { useState, useEffect } from "react";
-import { useAuth } from "./useAuth";
+import { tokenAtom } from "@/atoms/AuthAtom";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
+import { useAtomValue } from "jotai";
+import { useEffect, useState } from "react";
 
 const useFetchWithAuth = <T>(url: string) => {
-  const { token } = useAuth();
+  // const { token } = useAuth();
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const token = useAtomValue(tokenAtom);
 
   useEffect(() => {
     const fetchData = async () => {
