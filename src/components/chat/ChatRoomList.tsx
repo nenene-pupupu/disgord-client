@@ -1,14 +1,6 @@
 import { IconSky } from "@/assets/svg";
-import { IoAdd, IoLockClosed } from "react-icons/io5";
-import Tooltip from "@components/common/Tooltip";
-import { useEffect, useState } from "react";
-import { MdChevronRight } from "react-icons/md";
-import { IoCreateOutline } from "react-icons/io5";
-import {
-  curRoomIdAtom,
-  participantsAtom,
-  targetRoomIdAtom,
-} from "@/atoms/WebSocketAtom";
+import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
+import { curRoomIdAtom, targetRoomIdAtom } from "@/atoms/WebSocketAtom";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import {
   addChatroom,
@@ -16,27 +8,24 @@ import {
   getChatrooms,
   modChatroom,
 } from "@/services/chatService";
-import { fetchWithAuth } from "@/services/fetchWithAuth";
-import { useAuth } from "@/hooks/useAuth";
-import Modal from "@components/common/Modal";
 import { Chatroom } from "@/types";
-import { useWebSocket } from "@/hooks/useWebSocket";
+import Modal from "@components/common/Modal";
+import Tooltip from "@components/common/Tooltip";
+import { useAtom, useAtomValue } from "jotai";
+import { useEffect, useState } from "react";
+import { IoAdd, IoCreateOutline, IoLockClosed } from "react-icons/io5";
+import { MdChevronRight } from "react-icons/md";
 
 const API_URL = "http://localhost:8080";
 
 const ChatRoomList = () => {
-  const { token, userId } = useAuth();
-  const {
-    changeRoom,
-    startCall,
-  } = useWebSocket();
+  const { changeRoom, startCall } = useWebSocket();
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [chatrooms, setChatrooms] = useState<Chatroom[] | null>(null);
 
-  const setParticipants = useSetAtom(participantsAtom);
   const token = useAtomValue(tokenAtom);
   const userId = useAtomValue(userIdAtom);
 

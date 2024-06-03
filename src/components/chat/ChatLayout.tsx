@@ -1,39 +1,36 @@
 import { userIdAtom } from "@/atoms/AuthAtom";
-import { CamOnAtom, mutedAtom, soundOnAtom } from "@/atoms/ParticipantAtom";
-import { curRoomIdAtom } from "@/atoms/WebSocketAtom";
+import { audioOnAtom, soundOnAtom, videoOnAtom } from "@/atoms/ParticipantAtom";
+import {
+  curRoomIdAtom,
+  localStreamAtom,
+  remoteStreamsAtom,
+} from "@/atoms/WebSocketAtom";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { useAtom, useAtomValue } from "jotai";
+import { useEffect, useRef } from "react";
 import { ImPhoneHangUp } from "react-icons/im";
 import {
-  IoHeadset,
   IoMic,
   IoMicOff,
   IoPerson,
   IoVideocam,
   IoVideocamOff,
-  IoHeadsetOutline,
 } from "react-icons/io5";
 import { MdHeadset, MdHeadsetOff } from "react-icons/md";
 
 const ChatLayout = () => {
-  const {
-    sendMessage,
-    localStream,
-    remoteStreams,
-    endCall,
-    audioOn,
-    videoOn,
-    handleAudioMute,
-    handleVideoMute,
-  } = useWebSocket();
+  const { sendMessage, endCall } = useWebSocket();
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-
-  const [camOn, setCamOn] = useAtom(CamOnAtom);
-  const [muted, setMuted] = useAtom(mutedAtom);
+  const [audioOn, setAudioOn] = useAtom(audioOnAtom);
+  const [videoOn, setVideoOn] = useAtom(videoOnAtom);
   const [soundOn, setSoundOn] = useAtom(soundOnAtom);
+
   const userId = useAtomValue(userIdAtom);
   const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
+
+  const localStream = useAtomValue(localStreamAtom);
+  const remoteStreams = useAtomValue(remoteStreamsAtom);
 
   useEffect(() => {
     if (localVideoRef.current && localStream) {
@@ -74,9 +71,24 @@ const ChatLayout = () => {
     setCurRoomId(0);
   };
 
-  const handleMuted = () => setMuted((prev: boolean) => !prev);
-  const handleCamOn = () => setCamOn((prev: boolean) => !prev);
-  const handleSoundOn = () => setSoundOn((prev: boolean) => !prev);
+  // const handleMuted = () => setMuted((prev: boolean) => !prev);
+  // const handleCamOn = () => setCamOn((prev: boolean) => !prev);
+
+  const handleAudioMute = () => {
+    localStream
+      ?.getAudioTracks()
+      .forEach((track) => (track.enabled = !track.enabled));
+    setAudioOn((prev) => !prev);
+  };
+
+  const handleVideoMute = () => {
+    localStream
+      ?.getVideoTracks()
+      .forEach((track) => (track.enabled = !track.enabled));
+    setVideoOn((prev) => !prev);
+  };
+
+  const handleSoundMute = () => setSoundOn((prev) => !prev);
 
   return (
     <div className="bg-gray-200 rounded-lg w-full flex flex-col gap-4 p-4">
@@ -124,12 +136,11 @@ const ChatLayout = () => {
         >
           {videoOn ? <IoVideocam /> : <IoVideocamOff />}
         </div>
-        <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer">
-          {soundOn ? (
-            <MdHeadset onClick={handleSoundOn} />
-          ) : (
-            <MdHeadsetOff onClick={handleSoundOn} />
-          )}
+        <div
+          onClick={handleSoundMute}
+          className="bg-white rounded-full w-10 h-10 flex items-center justify-center cursor-pointer"
+        >
+          {soundOn ? <MdHeadset /> : <MdHeadsetOff />}
         </div>
         <div
           onClick={handleExit}

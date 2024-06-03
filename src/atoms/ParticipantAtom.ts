@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 
-export const CamOnAtom = atom<boolean>(false);
+export const videoOnAtom = atom<boolean>(true);
 
-export const mutedAtom = atom<boolean>(true);
+export const audioOnAtom = atom<boolean>(true);
 
-export const soundOnAtom = atom<boolean>(false);
+export const soundOnAtom = atom<boolean>(true);

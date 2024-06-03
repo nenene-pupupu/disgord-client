@@ -10,3 +10,7 @@ export const socketAtom = atom<WebSocket | null>(null);
 export const messagesAtom = atom<SockMessage[]>([]);
 
 export const participantsAtom = atom<sockClient[] | null>(null);
+
+export const localStreamAtom = atom<MediaStream | null>(null);
+
+export const remoteStreamsAtom = atom<MediaStream[]>([]);
