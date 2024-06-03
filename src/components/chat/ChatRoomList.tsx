@@ -59,23 +59,22 @@ const ChatRoomList = () => {
 
     console.log("joining", id);
 
-    // try {
-    //   const res = await fetchWithAuth(
-    //     token,
-    //     `http://localhost:8080/chatrooms/${id}/join`,
-    //     {
-    //       method: "POST",
-    //     },
-    //   );
-    //   console.log("res", res);
+    try {
+      const res = await fetchWithAuth(
+        token,
+        `http://localhost:8080/chatrooms/${id}/join`,
+        {
+          method: "POST",
+        },
+      );
 
-    //   if (!res.ok) {
-    //     console.log("err");
-    //     return;
-    //   }
+      if (!res.ok) {
+        console.log("err");
+        return;
+      }
 
-    //   const data = await res.json();
-    //   console.log("Enter data", data);
+      const data = await res.json();
+      console.log("Enter data", data);
     //   // Fetch the messages for the new chatroom and update the state
     //   // const messagesRes = await fetchWithAuth(
     //   //   token,

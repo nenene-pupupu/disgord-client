@@ -1,11 +1,6 @@
-import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
-import {
-  curRoomIdAtom,
-  messagesAtom,
-  socketAtom,
-  targetRoomIdAtom,
-} from "@/atoms/WebSocketAtom";
-import { SockMessage, sockClient } from "@/types";
+import { tokenAtom, userIdAtom } from "@/atoms/Auth";
+import { curRoomIdAtom, messagesAtom, socketAtom } from "@/atoms/WebSocketAtom";
+import { SockMessage } from "@/types";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 
@@ -14,22 +9,30 @@ const URL = "ws://localhost:8080/ws";
 export const useWebSocket = () => {
   const [socket, setSocket] = useAtom(socketAtom);
   const setMessages = useSetAtom(messagesAtom);
+  // const [messages, setMessages] = useAtom(messagesAtom);
   const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
-  const setTargetRoomId = useSetAtom(targetRoomIdAtom);
+
   const token = useAtomValue(tokenAtom);
   const userId = useAtomValue(userIdAtom);
 
   useEffect(() => {
-    if (token) {
+    if (token && !socket) {
       const wsUrl = `${URL}?access_token=${token}`;
-      console.log("Connecting to WebSocket URL:", wsUrl);
-      const ws = new WebSocket(wsUrl);
+      if (!socket) {
+        console.log("Connecting to WebSocket URL:", wsUrl);
+        setSocket(new WebSocket(wsUrl));
+      }
+    }
+  }, [token]);
 
-      ws.onopen = () => {
+  useEffect(() => {
+    console.log("socket", socket);
+    if (token && socket) {
+      socket.onopen = () => {
         console.log("WebSocket is open now.");
       };
 
-      ws.onmessage = (event) => {
+      socket.onmessage = (event) => {
         try {
           console.log("Got message:", event.data);
           const message: SockMessage = JSON.parse(event.data);
@@ -43,10 +46,10 @@ export const useWebSocket = () => {
         }
       };
 
-      ws.onclose = async (event) => {
+      socket.onclose = async (event) => {
         console.log("closing websocket");
         if (token) {
-          ws.send(
+          socket.send(
             JSON.stringify({
               chatroomId: curRoomId,
               senderId: userId,
@@ -58,18 +61,18 @@ export const useWebSocket = () => {
         console.log("WebSocket is closed now:", event);
       };
 
-      ws.onerror = (error) => {
+      socket.onerror = (error) => {
         console.error("WebSocket error:", error);
       };
 
-      setSocket(ws);
-
       return () => {
         console.log("Cleaning up WebSocket connection.");
-        ws.close();
+        setCurRoomId(0);
+        setSocket(null);
+        socket.close();
       };
     }
-  }, [token]);
+  }, [token, socket]);
 
   const addParticipant = (client: sockClient) => {
     if (socket) {
@@ -97,10 +100,13 @@ export const useWebSocket = () => {
   };
 
   return {
+    // socket,
+    // messages,
+    // curRoomId,
+    // targetRoomId,
     sendMessage,
     appendMessages,
-    setCurRoomId,
-    setTargetRoomId,
-    addParticipant,
+    // setCurRoomId,
+    // setTargetRoomId,
   };
 };
