@@ -55,7 +55,6 @@ export const WebSocketProvider = ({
 
       ws.onmessage = async (event) => {
         const message: SockMessage = JSON.parse(event.data);
-        console.log("[DEBUG] receive", message);
         switch (message.action) {
           case "SEND_TEXT":
             setMessages((prev) => [...prev, message]);
@@ -91,13 +90,6 @@ export const WebSocketProvider = ({
               pc.current?.setRemoteDescription(offer);
               pc.current?.createAnswer().then((answer) => {
                 pc.current?.setLocalDescription(answer);
-                console.log("sending in connect():offer", {
-                  chatroomId: curRoomId,
-                  senderId: userId,
-                  action: "ANSWER",
-                  content: JSON.stringify(answer),
-                });
-
                 ws.send(
                   JSON.stringify({
                     chatroomId: curRoomId,
@@ -149,7 +141,6 @@ export const WebSocketProvider = ({
   }, [token, url]);
 
   const sendMessage = (message: SockMessage) => {
-    console.log("[DEBUG] sending", message);
     socket?.send(JSON.stringify(message));
   };
 
@@ -158,14 +149,12 @@ export const WebSocketProvider = ({
   };
 
   const getLocalStream = async () => {
-    console.log("[DEBUG] getLocalStream()");
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
       });
       setLocalStream(stream);
-      console.log("[INFO] Local stream obtained successfully");
       return stream;
     } catch (error) {
       console.error("[ERROR] Error obtaining local stream: ", error);
@@ -174,7 +163,6 @@ export const WebSocketProvider = ({
   };
 
   const createPeerConnection = async () => {
-    console.log("[DEBUG] createPeerConnection()", localStream);
     let stream = localStream;
     if (!stream) {
       stream = await getLocalStream();
@@ -189,7 +177,6 @@ export const WebSocketProvider = ({
     stream.getTracks().forEach((track) => pc.current?.addTrack(track, stream));
 
     pc.current.ontrack = (event) => {
-      console.log("[DEBUG] ontrack()");
       if (event.track.kind === "audio") {
         return;
       }
@@ -197,7 +184,6 @@ export const WebSocketProvider = ({
     };
 
     pc.current.onicecandidate = (event) => {
-      console.log("sending in icecandidate");
       if (event.candidate) {
         sendMessage({
           chatroomId: curRoomId,
@@ -208,7 +194,6 @@ export const WebSocketProvider = ({
       }
     };
 
-    console.log("[INFO] Peer connection created successfully");
     return pc.current;
   };
 
@@ -238,7 +223,6 @@ export const WebSocketProvider = ({
     setLocalStream(stream);
 
     pc.current.ontrack = (event) => {
-      console.log("[DEBUG] ontrack()");
       if (event.track.kind === "audio") {
         return;
       }
@@ -246,7 +230,6 @@ export const WebSocketProvider = ({
     };
 
     pc.current.onicecandidate = (event) => {
-      console.log("sending in icecandidate");
       if (event.candidate) {
         sendMessage({
           chatroomId: newRoomId,
@@ -259,8 +242,6 @@ export const WebSocketProvider = ({
   };
 
   const startCall = async () => {
-    console.log("[DEBUG] startCall()");
-
     if (!pc.current) {
       const peerConnection = await createPeerConnection();
       if (!peerConnection) {
@@ -268,13 +249,9 @@ export const WebSocketProvider = ({
         return;
       }
     }
-
-    console.log("[INFO] Call started successfully");
   };
 
   const endCall = () => {
-    console.log("[DEBUG] endCall()");
-
     localStream?.getTracks().forEach((track) => track.stop());
     pc.current?.close();
     pc.current = null;
