@@ -59,9 +59,29 @@ export const WebSocketProvider = ({
           case "SEND_TEXT":
             setMessages((prev) => [...prev, message]);
             break;
-          case "JOIN_ROOM":
-            // console.log("JOIN_ROOM", message);
+
+          /* TODO: 채팅 참여/퇴장 메세지 */
+
+          case "JOIN_ROOM": {
+            // const joinMsg: SockMessage = {
+            //   chatroomId: message.chatroomId,
+            //   action: "ANNOUNCE",
+            //   senderId: message.senderId,
+            //   content: `${message.content} joined the chatroom`,
+            // };
+            // setMessages((prev) => [...prev, joinMsg]);
             break;
+          }
+          case "LEAVE_ROOM": {
+            // const leaveMsg: SockMessage = {
+            //   chatroomId: message.chatroomId,
+            //   action: "ANNOUNCE",
+            //   senderId: message.senderId,
+            //   content: `${message.content} leaved the chatroom`,
+            // };
+            // setMessages((prev) => [...prev, leaveMsg]);
+            break;
+          }
           case "OFFER":
             if (message.content) {
               const offer: RTCSessionDescriptionInit = JSON.parse(
@@ -87,7 +107,6 @@ export const WebSocketProvider = ({
                 );
               });
               break;
-              // await handleOffer(offer);
             }
             break;
           case "CANDIDATE":
@@ -96,9 +115,6 @@ export const WebSocketProvider = ({
                 message.content,
               );
               pc.current?.addIceCandidate(candidate);
-
-              // await handleCandidate(candidate);
-              // handleCandidate(candidate);
             }
             break;
           default:
@@ -131,43 +147,6 @@ export const WebSocketProvider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token, url]);
 
-  // const handleOffer = async (offer: RTCSessionDescriptionInit) => {
-  //   if (!pc.current) createPeerConnection();
-  //   await pc.current?.setRemoteDescription(offer);
-  //   // await pc.current?.setRemoteDescription(new RTCSessionDescription(offer));
-  //   const answer = await pc.current?.createAnswer();
-  //   await pc.current?.setLocalDescription(answer);
-  //   console.log("sending in offer");
-
-  //   sendMessage({
-  //     chatroomId: curRoomId,
-  //     senderId: userId!,
-  //     action: "ANSWER",
-  //     content: JSON.stringify(answer),
-  //   });
-  // };
-
-  // const handleCandidate = (candidate: RTCIceCandidateInit) => {
-  //   try {
-  //     if (pc.current) {
-  //       // await pc.current.addIceCandidate(new RTCIceCandidate(candidate));
-  //       pc.current.addIceCandidate(candidate);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error adding received ICE candidate", error);
-  //   }
-  // };
-
-  // const handleCandidate = async (candidate: RTCIceCandidateInit) => {
-  //   try {
-  //     if (pc.current) {
-  //       await pc.current.addIceCandidate(new RTCIceCandidate(candidate));
-  //     }
-  //   } catch (error) {
-  //     console.error("Error adding received ICE candidate", error);
-  //   }
-  // };
-
   const sendMessage = (message: SockMessage) => {
     console.log("[DEBUG] sending", message);
     socket?.send(JSON.stringify(message));
@@ -186,7 +165,7 @@ export const WebSocketProvider = ({
       });
       setLocalStream(stream);
       console.log("[INFO] Local stream obtained successfully");
-      return stream; // 직접 스트림을 반환
+      return stream;
     } catch (error) {
       console.error("[ERROR] Error obtaining local stream: ", error);
       return null;
