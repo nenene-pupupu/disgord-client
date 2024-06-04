@@ -16,6 +16,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { IoAdd, IoCreateOutline, IoLockClosed } from "react-icons/io5";
 import { MdChevronRight } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}`;
 
@@ -45,9 +46,8 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
   }, []);
 
   const fetchChatrooms = async () => {
-    if (!token) return;
     try {
-      const res: Chatroom[] = await getChatrooms(token);
+      const res: Chatroom[] = await getChatrooms();
       setChatrooms(res);
     } catch (error) {
       alert((error as Error).message);
@@ -73,8 +73,13 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
     }
   };
 
+  const navigator = useNavigate();
   const handleEnter = async (id: number) => {
-    if (!token || !userId) return;
+    if (!token || !userId) {
+      alert("Please login!");
+      navigator("/login");
+      return;
+    }
     if (curRoomId !== 0) {
       await changeRoom(id);
     } else {
@@ -90,7 +95,11 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
   };
 
   const handleCreate = async () => {
-    if (!token) return;
+    if (!token) {
+      alert("Please login!");
+      navigator("/login");
+      return;
+    }
     if (name.trim() === "") {
       alert("Enter channel name");
       return;
@@ -105,7 +114,11 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
   };
 
   const handleDelete = async () => {
-    if (!token || !targetRoomId) return;
+    if (!token || !targetRoomId) {
+      alert("Please login!");
+      navigator("/login");
+      return;
+    }
     try {
       await delChatroom(token, targetRoomId);
       fetchChatrooms();
@@ -216,11 +229,13 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
 
       <div className="flex mt-4 mb-2">
         <h2 className="text-2xl flex-auto">Channels</h2>
-        <Tooltip message="Add Room">
-          <button onClick={handleAddOpen}>
-            <IoAdd className="h-8 w-8 text-gray-400" />
-          </button>
-        </Tooltip>
+        {token && (
+          <Tooltip message="Add Room">
+            <button onClick={handleAddOpen}>
+              <IoAdd className="h-8 w-8 text-gray-400" />
+            </button>
+          </Tooltip>
+        )}
       </div>
 
       <ul
@@ -262,7 +277,7 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
                 </div>
               </div>
               <div className="flex-1 flex justify-end">
-                {chatRoom.ownerId && (
+                {token && chatRoom.ownerId === userId && (
                   <button
                     onClick={() => {
                       setTargetRoomId(chatRoom.id);

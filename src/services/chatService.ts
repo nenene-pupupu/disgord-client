@@ -43,11 +43,15 @@ export const useChatrooms = () => {
   return { data, error, loading };
 };
 
-export const getChatrooms = async (token: string) => {
-  const res = await fetchWithAuth(
-    token,
+export const getChatrooms = async () => {
+  const res = await fetch(
     `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms`,
   );
+
+  // const res = await fetchWithAuth(
+  //   token,
+  //   `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms`,
+  // );
   if (res.status != 200) {
     const errorData = await res.json();
     throw new Error(errorData.message);
