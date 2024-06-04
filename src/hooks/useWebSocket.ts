@@ -1,4 +1,5 @@
 import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
+import { audioOnAtom } from "@/atoms/ParticipantAtom";
 import {
   curRoomIdAtom,
   localStreamAtom,
@@ -7,7 +8,7 @@ import {
   remoteStreamsAtom,
   socketAtom,
 } from "@/atoms/WebSocketAtom";
-import { SockMessage } from "@/types";
+import { SockClient, SockMessage } from "@/types";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
 
@@ -23,10 +24,10 @@ export const useWebSocket = () => {
   const pc = useRef<RTCPeerConnection | null>(null);
   const [localStream, setLocalStream] = useAtom(localStreamAtom);
   const setRemoteStreams = useSetAtom(remoteStreamsAtom);
+  const audioOn = useAtomValue(audioOnAtom);
 
   useEffect(() => {
     if (token) {
-      console.log("create socket");
       const wsUrl = `${URL}?access_token=${token}`;
       const ws = new WebSocket(wsUrl);
 
@@ -34,57 +35,32 @@ export const useWebSocket = () => {
         console.log("WebSocket is open now.");
       };
 
-      // ws.onmessage = (event) => {
-      //   try {
-      //     console.log("Got message:", event.data);
-      //     const message: SockMessage = JSON.parse(event.data);
-      //     if (message.action === "SEND_TEXT") {
-      //       setMessages((prev) => [...prev, message]);
-      //     } else if (message.action === "JOIN_ROOM") {
-      //       console.log(message.senderId, "join in room", message.chatroomId);
-      //       addParticipant(message.senderId);
-      //     }
-      //   } catch (error) {
-      //     console.error("Failed to parse message:", event.data);
-      //   }
-      // };
       ws.onmessage = async (event) => {
         const message: SockMessage = JSON.parse(event.data);
+        console.log(message);
         switch (message.action) {
           case "SEND_TEXT":
             console.log("send text", message);
             setMessages((prev) => [...prev, message]);
             break;
 
-          /* TODO: 채팅 참여/퇴장 메세지 */
+          case "LIST_USERS": {
+            if (message.content) {
+              const users: SockClient[] = JSON.parse(message.content);
+              setParticipants(users);
+            }
+            break;
+          }
 
-          case "JOIN_ROOM": {
-            // const joinMsg: SockMessage = {
-            //   chatroomId: message.chatroomId,
-            //   action: "ANNOUNCE",
-            //   senderId: message.senderId,
-            //   content: `${message.content} joined the chatroom`,
-            // };
-            // setMessages((prev) => [...prev, joinMsg]);
-            console.log("join room", message);
-            appendParticipant(message.senderId);
+          case "KICKED":
+            alert("Chatroom has been deleted");
+            setCurRoomId(0);
             break;
-          }
-          case "LEAVE_ROOM": {
-            // const leaveMsg: SockMessage = {
-            //   chatroomId: message.chatroomId,
-            //   action: "ANNOUNCE",
-            //   senderId: message.senderId,
-            //   content: `${message.content} leaved the chatroom`,
-            // };
-            // setMessages((prev) => [...prev, leaveMsg]);
-            console.log("leave room", message);
-            break;
-          }
+
           case "OFFER":
             if (message.content) {
               const offer: RTCSessionDescriptionInit = JSON.parse(
-                message.content,
+                message.content as string,
               );
               pc.current?.setRemoteDescription(offer);
               pc.current?.createAnswer().then((answer) => {
@@ -101,10 +77,11 @@ export const useWebSocket = () => {
               break;
             }
             break;
+
           case "CANDIDATE":
             if (message.content) {
               const candidate: RTCIceCandidateInit = JSON.parse(
-                message.content,
+                message.content as string,
               );
               pc.current?.addIceCandidate(candidate);
             }
@@ -120,7 +97,6 @@ export const useWebSocket = () => {
             chatroomId: curRoomId,
             senderId: userId!,
             action: "LEAVE_ROOM",
-            content: "",
           });
         }
         console.log("WebSocket is closed now.");
@@ -134,28 +110,8 @@ export const useWebSocket = () => {
         ws.close();
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
-
-  const appendParticipant = (id: number) => {
-    setParticipants((prev) => {
-      const participantExists = prev?.some(
-        (participant) => participant.userId === id,
-      );
-
-      if (participantExists) {
-        return prev;
-      }
-
-      return [
-        ...(prev || []),
-        {
-          userId: id,
-          muted: true,
-          camOn: false,
-        },
-      ];
-    });
-  };
 
   const sendMessage = (message: SockMessage) => {
     socket?.send(JSON.stringify(message));
@@ -171,6 +127,9 @@ export const useWebSocket = () => {
         video: true,
         audio: true,
       });
+      stream.getAudioTracks().forEach((track) => (track.enabled = audioOn));
+      stream.getVideoTracks().forEach((track) => (track.enabled = false));
+
       setLocalStream(stream);
       return stream;
     } catch (error) {
@@ -199,6 +158,9 @@ export const useWebSocket = () => {
       }
       console.log(event);
       setRemoteStreams((prev) => [...prev, event.streams[0]]);
+
+      /* TODO */
+      // 제대로 지워지는 지 확인
       event.streams[0].onremovetrack = () => {
         setRemoteStreams((prev) =>
           prev.filter((s) => s.id !== event.streams[0].id),

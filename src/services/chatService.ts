@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { fetchWithAuth } from "./fetchWithAuth";
 
 export const useChatrooms = () => {
-  // const { token } = useAuth();
   const [data, setData] = useState<Chatroom[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);

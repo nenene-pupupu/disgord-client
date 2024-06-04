@@ -80,24 +80,24 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
     localStream
       ?.getAudioTracks()
       .forEach((track) => (track.enabled = !track.enabled));
-    setAudioOn((prev) => !prev);
     sendMessage({
       chatroomId: curRoomId,
       senderId: userId!,
       action: audioOn ? "MUTE" : "UNMUTE",
     });
+    setAudioOn((prev) => !prev);
   };
 
   const handleVideoMute = () => {
     localStream
       ?.getVideoTracks()
       .forEach((track) => (track.enabled = !track.enabled));
-    setVideoOn((prev) => !prev);
     sendMessage({
       chatroomId: curRoomId,
       senderId: userId!,
       action: videoOn ? "TURN_ON_CAM" : "TURN_OFF_CAM",
     });
+    setVideoOn((prev) => !prev);
   };
 
   const handleSoundMute = () => setSoundOn((prev) => !prev);

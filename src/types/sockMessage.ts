@@ -3,4 +3,7 @@ export interface SockMessage {
   senderId: number;
   action: string;
   content?: string;
+  createdAt?: number;
+  displayName?: string;
+  profileColorIndex?: number;
 }

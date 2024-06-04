@@ -1,4 +1,5 @@
 import { participantsAtom } from "@/atoms/WebSocketAtom";
+import ProfileIcon from "@components/common/ProfileIcon";
 // import ProfileIcon from "@components/common/ProfileIcon";
 import { useAtomValue } from "jotai";
 import { IoMic, IoMicOff, IoVideocam, IoVideocamOff } from "react-icons/io5";
@@ -15,7 +16,7 @@ const ChatParticipants = () => {
         <div className="">
           <div className="flex flex-col gap-2">
             {participants &&
-              participants.map((v, i) => (
+              participants?.map((v, i) => (
                 <div
                   key={i}
                   className={
@@ -24,19 +25,13 @@ const ChatParticipants = () => {
                   }
                 >
                   <div>
-                    <img
-                      src={
-                        "https://firebasestorage.googleapis.com/v0/b/urbur-5e34d.appspot.com/o/urchive%2Fyellow.svg?alt=media&token=b6a02ee0-a63a-4211-bf24-b30d2d3aeb1f"
-                      }
-                      className="w-8 h-8 rounded-full"
-                    />
-                    {/* <ProfileIcon
+                    <ProfileIcon
                       index={v.profileColorIndex}
                       className="w-8 h-8 rounded-full"
-                    /> */}
+                    />
                   </div>
                   <div className="flex-1">
-                    <p>{v.userId}</p>
+                    <p>{v.displayName}</p>
                   </div>
                   {v.muted ? (
                     <IoMicOff color="gray" className="cursor-pointer" />

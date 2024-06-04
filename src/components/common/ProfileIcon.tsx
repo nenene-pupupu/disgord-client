@@ -7,7 +7,6 @@ const ProfileIcon = ({
   index: number;
   className: string;
 }) => {
-  console.log(index);
   switch (index) {
     case 1:
       return <img src={IconSky} className={className} />;

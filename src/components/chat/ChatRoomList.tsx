@@ -1,11 +1,7 @@
 import { IconSky } from "@/assets/svg";
 import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
 import { audioOnAtom, videoOnAtom } from "@/atoms/ParticipantAtom";
-import {
-  curRoomIdAtom,
-  participantsAtom,
-  targetRoomIdAtom,
-} from "@/atoms/WebSocketAtom";
+import { curRoomIdAtom, targetRoomIdAtom } from "@/atoms/WebSocketAtom";
 import {
   addChatroom,
   delChatroom,
@@ -13,7 +9,7 @@ import {
   modChatroom,
 } from "@/services/chatService";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
-import { Chatroom, SockClient } from "@/types";
+import { Chatroom } from "@/types";
 import Modal from "@components/common/Modal";
 import Tooltip from "@components/common/Tooltip";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
@@ -40,7 +36,6 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
 
   const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
   const [targetRoomId, setTargetRoomId] = useAtom(targetRoomIdAtom);
-  const setParticipants = useSetAtom(participantsAtom);
   const audioOn = useAtomValue(audioOnAtom);
   const setVideoOn = useSetAtom(videoOnAtom);
 
@@ -68,17 +63,14 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
         method: "POST",
         body: JSON.stringify({
           password: "",
-          camOn: audioOn,
-          muted: false,
+          camOn: false,
+          muted: audioOn,
         }),
       },
     );
     if (!res.ok) {
-      console.error("Fail to join room 1");
+      console.error("Fail to join room", chatroomId);
     }
-    const data: SockClient[] = await res.json();
-    console.log("[INFO] Joined room", data);
-    setParticipants(data);
   };
 
   const handleEnter = async (id: number) => {
@@ -104,8 +96,7 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
       return;
     }
     try {
-      const res: Chatroom = await addChatroom(token, name, password);
-      console.log(res);
+      await addChatroom(token, name, password);
       fetchChatrooms();
     } catch (error) {
       alert((error as Error).message);

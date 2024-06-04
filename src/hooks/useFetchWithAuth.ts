@@ -18,7 +18,7 @@ const useFetchWithAuth = <T>(url: string) => {
       if (token) {
         try {
           const res = await fetchWithAuth(token, url);
-          // console.log("status", res.status);
+          console.log("status", res.status);
           if (res.status === 401) {
             alert("Please Log in");
             navigator("/login");
