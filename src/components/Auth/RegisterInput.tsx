@@ -25,7 +25,7 @@ const RegisterInput = () => {
         displayname.current!.value,
       );
       // 단순히 login 으로 이동
-      alert("Please log in!");
+      alert("Sign up complete. Please log in!");
       navigate("/login");
     } catch (error) {
       alert((error as Error).message);
