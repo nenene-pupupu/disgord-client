@@ -1,5 +1,6 @@
 import { IconSky } from "@/assets/svg";
 import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
+import { audioOnAtom, videoOnAtom } from "@/atoms/ParticipantAtom";
 import {
   curRoomIdAtom,
   participantsAtom,
@@ -40,6 +41,8 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
   const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
   const [targetRoomId, setTargetRoomId] = useAtom(targetRoomIdAtom);
   const setParticipants = useSetAtom(participantsAtom);
+  const audioOn = useAtomValue(audioOnAtom);
+  const setVideoOn = useSetAtom(videoOnAtom);
 
   useEffect(() => {
     fetchChatrooms();
@@ -57,11 +60,17 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
   };
 
   const joinRoom = async (chatroomId: number) => {
+    setVideoOn(false);
     const res = await fetchWithAuth(
       token!,
       `${API_URL}/chatrooms/${chatroomId}/join`,
       {
         method: "POST",
+        body: JSON.stringify({
+          password: "",
+          camOn: audioOn,
+          muted: false,
+        }),
       },
     );
     if (!res.ok) {
