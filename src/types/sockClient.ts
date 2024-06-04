@@ -1,4 +1,4 @@
-export interface sockClient {
+export interface SockClient {
   camOn: boolean;
   muted: boolean;
   userId: number;

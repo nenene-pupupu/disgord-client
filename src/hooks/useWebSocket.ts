@@ -23,22 +23,18 @@ export const useWebSocket = () => {
   const pc = useRef<RTCPeerConnection | null>(null);
   const [localStream, setLocalStream] = useAtom(localStreamAtom);
   const setRemoteStreams = useSetAtom(remoteStreamsAtom);
+
   useEffect(() => {
-    if (token && !socket) {
+    if (token) {
+      console.log("create socket");
       const wsUrl = `${URL}?access_token=${token}`;
-      if (!socket) {
-        setSocket(new WebSocket(wsUrl));
-      }
-    }
-  }, [token]);
+      const ws = new WebSocket(wsUrl);
 
-  useEffect(() => {
-    if (token && socket) {
-      // socket.onopen = () => {
-      //   console.log("WebSocket is open now.");
-      // };
+      ws.onopen = () => {
+        console.log("WebSocket is open now.");
+      };
 
-      // socket.onmessage = (event) => {
+      // ws.onmessage = (event) => {
       //   try {
       //     console.log("Got message:", event.data);
       //     const message: SockMessage = JSON.parse(event.data);
@@ -52,10 +48,11 @@ export const useWebSocket = () => {
       //     console.error("Failed to parse message:", event.data);
       //   }
       // };
-      socket.onmessage = async (event) => {
+      ws.onmessage = async (event) => {
         const message: SockMessage = JSON.parse(event.data);
         switch (message.action) {
           case "SEND_TEXT":
+            console.log("send text", message);
             setMessages((prev) => [...prev, message]);
             break;
 
@@ -69,7 +66,8 @@ export const useWebSocket = () => {
             //   content: `${message.content} joined the chatroom`,
             // };
             // setMessages((prev) => [...prev, joinMsg]);
-            addParticipant(message.senderId);
+            console.log("join room", message);
+            appendParticipant(message.senderId);
             break;
           }
           case "LEAVE_ROOM": {
@@ -80,6 +78,7 @@ export const useWebSocket = () => {
             //   content: `${message.content} leaved the chatroom`,
             // };
             // setMessages((prev) => [...prev, leaveMsg]);
+            console.log("leave room", message);
             break;
           }
           case "OFFER":
@@ -87,11 +86,10 @@ export const useWebSocket = () => {
               const offer: RTCSessionDescriptionInit = JSON.parse(
                 message.content,
               );
-
               pc.current?.setRemoteDescription(offer);
               pc.current?.createAnswer().then((answer) => {
                 pc.current?.setLocalDescription(answer);
-                socket.send(
+                ws.send(
                   JSON.stringify({
                     chatroomId: curRoomId,
                     senderId: userId,
@@ -116,7 +114,7 @@ export const useWebSocket = () => {
         }
       };
 
-      socket.onclose = () => {
+      ws.onclose = () => {
         if (curRoomId !== 0) {
           sendMessage({
             chatroomId: curRoomId,
@@ -128,28 +126,35 @@ export const useWebSocket = () => {
         console.log("WebSocket is closed now.");
       };
 
-      // socket.onerror = (error) => {
-      //   console.error("WebSocket error:", error);
-      // };
+      setSocket(ws);
 
       return () => {
-        // console.log("Cleaning up WebSocket connection.");
         setCurRoomId(0);
         setSocket(null);
-        socket.close();
+        ws.close();
       };
     }
-  }, [token, socket]);
+  }, [token]);
 
-  const addParticipant = (id: number) => {
-    setParticipants((prev) => [
-      ...(prev || []),
-      {
-        camOn: false,
-        muted: true,
-        userId: id,
-      },
-    ]);
+  const appendParticipant = (id: number) => {
+    setParticipants((prev) => {
+      const participantExists = prev?.some(
+        (participant) => participant.userId === id,
+      );
+
+      if (participantExists) {
+        return prev;
+      }
+
+      return [
+        ...(prev || []),
+        {
+          userId: id,
+          muted: true,
+          camOn: false,
+        },
+      ];
+    });
   };
 
   const sendMessage = (message: SockMessage) => {
@@ -272,16 +277,10 @@ export const useWebSocket = () => {
   };
 
   return {
-    // socket,
-    // messages,
-    // curRoomId,
-    // targetRoomId,
     changeRoom,
     startCall,
     endCall,
     sendMessage,
     appendMessages,
-    // setCurRoomId,
-    // setTargetRoomId,
   };
 };

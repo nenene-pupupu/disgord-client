@@ -5,7 +5,7 @@ import {
   localStreamAtom,
   remoteStreamsAtom,
 } from "@/atoms/WebSocketAtom";
-import { useWebSocket } from "@/hooks/useWebSocket";
+import { SockMessage } from "@/types";
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useRef } from "react";
 import { ImPhoneHangUp } from "react-icons/im";
@@ -18,8 +18,12 @@ import {
 } from "react-icons/io5";
 import { MdHeadset, MdHeadsetOff } from "react-icons/md";
 
-const ChatLayout = () => {
-  const { sendMessage, endCall } = useWebSocket();
+interface WebSocketProps {
+  sendMessage: (message: SockMessage) => void;
+  endCall: () => void;
+}
+
+const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const [audioOn, setAudioOn] = useAtom(audioOnAtom);
@@ -71,14 +75,16 @@ const ChatLayout = () => {
     setCurRoomId(0);
   };
 
-  // const handleMuted = () => setMuted((prev: boolean) => !prev);
-  // const handleCamOn = () => setCamOn((prev: boolean) => !prev);
-
   const handleAudioMute = () => {
     localStream
       ?.getAudioTracks()
       .forEach((track) => (track.enabled = !track.enabled));
     setAudioOn((prev) => !prev);
+    sendMessage({
+      chatroomId: curRoomId,
+      senderId: userId!,
+      action: audioOn ? "MUTE" : "UNMUTE",
+    });
   };
 
   const handleVideoMute = () => {
@@ -86,6 +92,11 @@ const ChatLayout = () => {
       ?.getVideoTracks()
       .forEach((track) => (track.enabled = !track.enabled));
     setVideoOn((prev) => !prev);
+    sendMessage({
+      chatroomId: curRoomId,
+      senderId: userId!,
+      action: videoOn ? "TURN_ON_CAM" : "TURN_OFF_CAM",
+    });
   };
 
   const handleSoundMute = () => setSoundOn((prev) => !prev);

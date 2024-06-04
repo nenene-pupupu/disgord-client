@@ -1,25 +1,32 @@
 import { IconSky } from "@/assets/svg";
 import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
-import { curRoomIdAtom, targetRoomIdAtom } from "@/atoms/WebSocketAtom";
-import { useWebSocket } from "@/hooks/useWebSocket";
+import {
+  curRoomIdAtom,
+  participantsAtom,
+  targetRoomIdAtom,
+} from "@/atoms/WebSocketAtom";
 import {
   addChatroom,
   delChatroom,
   getChatrooms,
   modChatroom,
 } from "@/services/chatService";
-import { Chatroom } from "@/types";
+import { Chatroom, SockClient } from "@/types";
 import Modal from "@components/common/Modal";
 import Tooltip from "@components/common/Tooltip";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { IoAdd, IoCreateOutline, IoLockClosed } from "react-icons/io5";
 import { MdChevronRight } from "react-icons/md";
 
 const API_URL = "http://localhost:8080";
 
-const ChatRoomList = () => {
-  const { changeRoom, startCall } = useWebSocket();
+interface WebSocketProps {
+  startCall: () => void;
+  changeRoom: (newRoomId: number) => void;
+}
+
+const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
   const [open, setOpen] = useState(false);
   const [type, setType] = useState("");
   const [name, setName] = useState("");
@@ -31,6 +38,7 @@ const ChatRoomList = () => {
 
   const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
   const [targetRoomId, setTargetRoomId] = useAtom(targetRoomIdAtom);
+  const setParticipants = useSetAtom(participantsAtom);
 
   useEffect(() => {
     fetchChatrooms();
@@ -57,8 +65,9 @@ const ChatRoomList = () => {
     if (!res.ok) {
       console.error("Fail to join room 1");
     }
-    const data = await res.json();
+    const data: SockClient[] = await res.json();
     console.log("[INFO] Joined room", data);
+    setParticipants(data);
   };
 
   const handleEnter = async (id: number) => {
