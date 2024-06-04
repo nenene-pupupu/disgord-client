@@ -13,7 +13,10 @@ export const useAuth = () => {
   const setTokenState = async (token: string | null) => {
     if (token) {
       localStorage.setItem("accessToken", token);
-      const res = await fetchWithAuth(token, "http://localhost:8080/users/me");
+      const res = await fetchWithAuth(
+        token,
+        `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/users/me`,
+      );
       const me: User = await res.json();
       setUserIdState(me.id);
     } else {
@@ -38,7 +41,7 @@ export const useAuth = () => {
       (async () => {
         const res = await fetchWithAuth(
           token,
-          "http://localhost:8080/users/me",
+          `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/users/me`,
         );
         const me: User = await res.json();
         setUserIdState(me.id);

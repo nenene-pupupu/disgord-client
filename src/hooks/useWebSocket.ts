@@ -11,7 +11,7 @@ import { SockMessage } from "@/types";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
 
-const URL = "ws://localhost:8080/ws";
+const URL = `ws://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/ws`;
 
 export const useWebSocket = () => {
   const token = useAtomValue(tokenAtom);

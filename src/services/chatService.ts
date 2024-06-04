@@ -19,7 +19,7 @@ export const useChatrooms = () => {
         try {
           const response = await fetchWithAuth(
             token,
-            "http://localhost:8080/chatrooms",
+            `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms`,
           );
           if (!response.ok) {
             throw new Error("Failed to fetch chatrooms");
@@ -45,7 +45,10 @@ export const useChatrooms = () => {
 };
 
 export const getChatrooms = async (token: string) => {
-  const res = await fetchWithAuth(token, "http://localhost:8080/chatrooms");
+  const res = await fetchWithAuth(
+    token,
+    `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms`,
+  );
   if (res.status != 200) {
     const errorData = await res.json();
     throw new Error(errorData.message);
@@ -59,13 +62,17 @@ export const addChatroom = async (
   name: string,
   password: string,
 ) => {
-  const res = await fetchWithAuth(token, "http://localhost:8080/chatrooms", {
-    method: "POST",
-    body: JSON.stringify({ name, password }),
-    headers: {
-      "Content-Type": "application/json",
+  const res = await fetchWithAuth(
+    token,
+    `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms`,
+    {
+      method: "POST",
+      body: JSON.stringify({ name, password }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
   if (res.status != 201) {
     const errorData = await res.json();
     throw new Error(errorData.message);
@@ -77,7 +84,7 @@ export const addChatroom = async (
 export const delChatroom = async (token: string, target: number) => {
   const res = await fetchWithAuth(
     token,
-    `http://localhost:8080/chatrooms/${target}`,
+    `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms/${target}`,
     {
       method: "DELETE",
       headers: {
@@ -100,7 +107,7 @@ export const modChatroom = async (
 ) => {
   const res = await fetchWithAuth(
     token,
-    `http://localhost:8080/chatrooms/${target}`,
+    `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms/${target}`,
     {
       method: "PATCH",
       body: JSON.stringify({

@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { IoAdd, IoCreateOutline, IoLockClosed } from "react-icons/io5";
 import { MdChevronRight } from "react-icons/md";
 
-const API_URL = "http://localhost:8080";
+const API_URL = `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}`;
 
 interface WebSocketProps {
   startCall: () => void;

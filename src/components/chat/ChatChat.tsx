@@ -29,7 +29,7 @@ const ChatChat = ({ sendMessage, appendMessages }: WebSocketProps) => {
       if (!token || !curRoomId) return;
       const res = await fetchWithAuth(
         token,
-        `http://localhost:8080/chats?chatroomId=${curRoomId}`,
+        `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chats?chatroomId=${curRoomId}`,
       );
       if (!res.ok) {
         throw new Error("Failed to fetch chat messages");
