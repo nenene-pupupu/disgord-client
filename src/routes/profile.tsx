@@ -55,8 +55,7 @@ export default function Profile() {
       return;
     }
     try {
-      const data = await delUsersMe(token, password);
-      console.log(data);
+      await delUsersMe(token, password);
       alert("delete success");
       setTokenState(null);
       navigate("/");
