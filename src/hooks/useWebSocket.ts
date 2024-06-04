@@ -197,7 +197,13 @@ export const useWebSocket = () => {
       if (event.track.kind === "audio") {
         return;
       }
+      console.log(event);
       setRemoteStreams((prev) => [...prev, event.streams[0]]);
+      event.streams[0].onremovetrack = () => {
+        setRemoteStreams((prev) =>
+          prev.filter((s) => s.id !== event.streams[0].id),
+        );
+      };
     };
 
     pc.current.onicecandidate = (event) => {
@@ -215,6 +221,10 @@ export const useWebSocket = () => {
   };
 
   const changeRoom = async (newRoomId: number) => {
+    setRemoteStreams(
+      (prev) =>
+        prev?.filter((stream) => stream.id !== `remoteStream-${6}`) || [],
+    );
     sendMessage({
       chatroomId: curRoomId,
       senderId: userId!,
