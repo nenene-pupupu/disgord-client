@@ -1,4 +1,5 @@
 import { participantsAtom } from "@/atoms/WebSocketAtom";
+// import ProfileIcon from "@components/common/ProfileIcon";
 import { useAtomValue } from "jotai";
 import { IoMic, IoMicOff, IoVideocam, IoVideocamOff } from "react-icons/io5";
 
@@ -29,6 +30,10 @@ const ChatParticipants = () => {
                       }
                       className="w-8 h-8 rounded-full"
                     />
+                    {/* <ProfileIcon
+                      index={v.profileColorIndex}
+                      className="w-8 h-8 rounded-full"
+                    /> */}
                   </div>
                   <div className="flex-1">
                     <p>{v.userId}</p>

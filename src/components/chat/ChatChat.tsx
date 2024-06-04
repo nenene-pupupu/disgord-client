@@ -3,6 +3,7 @@ import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
 import { curRoomIdAtom, messagesAtom } from "@/atoms/WebSocketAtom";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { SockMessage } from "@/types";
+// import ProfileIcon from "@components/common/ProfileIcon";
 import { useAtomValue } from "jotai";
 import { useEffect, useRef, useState } from "react";
 
@@ -115,6 +116,7 @@ const ChatChat = ({ sendMessage, appendMessages }: WebSocketProps) => {
           {messages.map((v, i) => (
             <div key={i} className="flex gap-2">
               <img src={IconSky} className="w-8 h-8 rounded-full" />
+              {/* <ProfileIcon index={v.profileColorIndex} className="w-8 h-8 rounded-full" /> */}
               <div className="flex-1">
                 <div className="flex justify-between">
                   <p>{v.senderId}</p>

@@ -1,8 +1,8 @@
-import { IconYellow } from "@/assets/svg";
 import { tokenAtom } from "@/atoms/AuthAtom";
 import { useAuth } from "@/hooks/useAuth";
 import { delUsersMe, getUsersMe, modUsersMe } from "@/services/profileService";
 import Modal from "@components/common/Modal";
+import ProfileIcon from "@components/common/ProfileIcon";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,7 @@ export default function Profile() {
   const [isEdit, setIsEdit] = useState(false);
   const [userName, setUserName] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const [profileColorIndex, setProfileColorIndex] = useState<number>(0);
   const [password, setPassword] = useState("");
 
   const token = useAtomValue(tokenAtom);
@@ -30,6 +31,8 @@ export default function Profile() {
         const data = await getUsersMe(token);
         setDisplayName(data.displayName);
         setUserName(data.username);
+        setProfileColorIndex(data.profileColorIndex);
+        console.log(data);
       } catch (error) {
         alert((error as Error).message);
       }
@@ -107,7 +110,14 @@ export default function Profile() {
         <div className="w-1/3 h-3/4 min-w-[400px] p-12 flex flex-col items-center justify-center gap-8 shadow-xl">
           <p className="text-2xl font-bold text-sky-600">My Profile</p>
           <div className="flex flex-col items-center gap-2">
-            <img src={IconYellow} className="w-24 h-24 rounded-full" />
+            {/* <img
+              src={getProfileImage(profileColorIndex)}
+              className="w-24 h-24 rounded-full"
+            /> */}
+            <ProfileIcon
+              index={profileColorIndex}
+              className={"w-24 h-24 rounded-full"}
+            />
             <p className="text-gray-900 text-xl font-medium">{userName}</p>
           </div>
           <div className="w-full flex flex-col gap-4">
