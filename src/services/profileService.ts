@@ -47,9 +47,6 @@ export const modUsersMe = async (
 export const delUsersMe = async (token: string, password: string) => {
   const res = await fetchWithAuth(token, API_URL, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify({ password }),
   });
   if (res.status != 204) {

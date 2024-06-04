@@ -68,9 +68,6 @@ export const addChatroom = async (
     {
       method: "POST",
       body: JSON.stringify({ name, password }),
-      headers: {
-        "Content-Type": "application/json",
-      },
     },
   );
   if (res.status != 201) {
@@ -87,9 +84,6 @@ export const delChatroom = async (token: string, target: number) => {
     `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms/${target}`,
     {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
     },
   );
   if (res.status != 204) {
@@ -114,9 +108,6 @@ export const modChatroom = async (
         name,
         password,
       }),
-      headers: {
-        "Content-Type": "application/json",
-      },
     },
   );
   if (res.status != 200) {

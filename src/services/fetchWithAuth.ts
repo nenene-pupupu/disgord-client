@@ -4,7 +4,10 @@ export const fetchWithAuth = async (
   init?: RequestInit,
 ) => {
   try {
-    const headers = new Headers(init?.headers || {});
+    const headers = new Headers({
+      "Content-Type": "application/json",
+      ...(init?.headers || {}),
+    });
 
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);

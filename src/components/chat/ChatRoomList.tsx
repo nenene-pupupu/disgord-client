@@ -11,6 +11,7 @@ import {
   getChatrooms,
   modChatroom,
 } from "@/services/chatService";
+import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { Chatroom, SockClient } from "@/types";
 import Modal from "@components/common/Modal";
 import Tooltip from "@components/common/Tooltip";
@@ -56,12 +57,13 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
   };
 
   const joinRoom = async (chatroomId: number) => {
-    const res = await fetch(`${API_URL}/chatrooms/${chatroomId}/join`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const res = await fetchWithAuth(
+      token!,
+      `${API_URL}/chatrooms/${chatroomId}/join`,
+      {
+        method: "POST",
       },
-    });
+    );
     if (!res.ok) {
       console.error("Fail to join room 1");
     }
