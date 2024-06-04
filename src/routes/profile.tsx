@@ -10,15 +10,13 @@ import { useNavigate } from "react-router-dom";
 export default function Profile() {
   const [open, setOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [userName, setUserName] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
 
   const token = useAtomValue(tokenAtom);
 
-  const {
-    setTokenState,
-    // , token
-  } = useAuth();
+  const { setTokenState } = useAuth();
   const navigate = useNavigate();
   const handleLogout = () => {
     setTokenState(null);
@@ -31,6 +29,7 @@ export default function Profile() {
       try {
         const data = await getUsersMe(token);
         setDisplayName(data.displayName);
+        setUserName(data.username);
       } catch (error) {
         alert((error as Error).message);
       }
@@ -109,7 +108,7 @@ export default function Profile() {
           <p className="text-2xl font-bold text-sky-600">My Profile</p>
           <div className="flex flex-col items-center gap-2">
             <img src={IconYellow} className="w-24 h-24 rounded-full" />
-            <p className="text-gray-900 text-xl font-medium">ssol00</p>
+            <p className="text-gray-900 text-xl font-medium">{userName}</p>
           </div>
           <div className="w-full flex flex-col gap-4">
             {isEdit && (
