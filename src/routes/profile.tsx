@@ -119,7 +119,7 @@ export default function Profile() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full text-gray-900 text-xl font-medium py-1"
+                  className="w-full text-gray-900 text-xl font-medium p-2 mt-1 border rounded-md"
                 />
               </div>
             )}
@@ -131,7 +131,7 @@ export default function Profile() {
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  className="w-full text-gray-900 text-xl font-medium py-1"
+                  className="w-full text-gray-900 text-xl p-2 mt-1 border rounded-md"
                 />
               ) : (
                 <p className="text-gray-900 text-xl font-medium py-1">
