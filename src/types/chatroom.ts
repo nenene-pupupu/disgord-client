@@ -5,4 +5,5 @@ export interface Chatroom {
   ownerId: number;
   password: string;
   isPrivate: boolean;
+  profileColorIndex: number;
 }

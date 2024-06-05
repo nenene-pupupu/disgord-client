@@ -1,10 +1,10 @@
-import { IconSky } from "@/assets/svg";
 import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
 import { audioOnAtom, videoOnAtom } from "@/atoms/ParticipantAtom";
 import { curRoomIdAtom, targetRoomIdAtom } from "@/atoms/WebSocketAtom";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { Chatroom } from "@/types";
 import Modal from "@components/common/Modal";
+import ProfileIcon from "@components/common/ProfileIcon";
 import Tooltip from "@components/common/Tooltip";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
@@ -163,10 +163,9 @@ const ChatRoomList = ({
               }
             >
               <div className="flex items-center w-40 gap-x-4">
-                <img
+                <ProfileIcon
+                  index={chatRoom.profileColorIndex}
                   className="h-10 w-10 flex-none rounded-lg bg-gray-50"
-                  src={IconSky}
-                  alt=""
                 />
                 <div className="min-w-0 flex-auto flex items-center gap-2">
                   <p
