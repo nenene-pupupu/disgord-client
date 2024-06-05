@@ -16,6 +16,7 @@ import {
   IoPerson,
   IoVideocam,
   IoVideocamOff,
+  IoVideocamOffOutline,
 } from "react-icons/io5";
 import { MdHeadset, MdHeadsetOff } from "react-icons/md";
 
@@ -165,6 +166,11 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
                 participantsCount === 1 ? "w-3/4 h-3/4" : "w-full h-full"
               }`}
             ></video>
+            {!videoOn && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-xl">
+                <IoVideocamOffOutline className="text-white text-5xl" />
+              </div>
+            )}
             <div className="absolute bottom-0 right-2 w-full text-white p-2 text-right rounded-b-xl">
               You
             </div>
@@ -182,8 +188,13 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
                     remoteVideoRefs.current[idx] = el;
                   }}
                   autoPlay
-                  className="w-full h-full rounded-xl transform scale-x-[-1] object-cover"
+                  className="w-full h-full rounded-xl transform scale-x-[-1] object-cover bg-gray-400"
                 ></video>
+                {participant && !participant.camOn && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-xl">
+                    <IoVideocamOffOutline className="text-white text-5xl" />
+                  </div>
+                )}
                 {participant && (
                   <div className="absolute bottom-0 right-2 w-full text-white p-2 text-right rounded-b-xl">
                     {participant.displayName}
@@ -192,21 +203,6 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
               </div>
             );
           })}
-          {/* {remoteStreams.map((v, index) => (
-            <div className="relative">
-              <video
-                key={index}
-                ref={(el) => {
-                  remoteVideoRefs.current[index] = el;
-                }}
-                autoPlay
-                className="w-full h-full rounded-xl transform scale-x-[-1] object-cover"
-              ></video>
-              <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 text-white p-2 text-center rounded-b-xl">
-                {participants[v.id].displayName}
-              </div>
-            </div>
-          ))} */}
         </div>
       </div>
       <div className="flex gap-8 justify-center">
