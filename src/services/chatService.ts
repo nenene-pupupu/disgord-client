@@ -56,6 +56,18 @@ export const getChatrooms = async () => {
   return data;
 };
 
+export const getChatroom = async (token: string, target: number) => {
+  const res = await fetchWithAuth(
+    token,
+    `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms/${target}`,
+  );
+  if (res && res.status === 200) {
+    const data: Chatroom = await res.json();
+    return data;
+  }
+  throw new Error("Fail to get chatroom " + target);
+};
+
 export const addChatroom = async (
   token: string,
   name: string,
