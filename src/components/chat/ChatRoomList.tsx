@@ -48,16 +48,21 @@ const ChatRoomList = ({
       {
         method: "POST",
         body: JSON.stringify({
-          password: "",
           camOn: false,
           muted: !audioOn,
+          password: password != "" ? password : "",
         }),
       },
     );
     if (res && !res.ok) {
       console.error("Fail to join room", chatroomId);
+      if (res && res.status == 403) {
+        handleOpen();
+      }
+    } else {
+      setCurRoomId(chatroomId);
+      handleClose();
     }
-    handleClose();
   };
 
   const handleEnter = async (id: number) => {
@@ -69,7 +74,7 @@ const ChatRoomList = ({
     if (curRoomId !== 0) {
       await changeRoom(id);
     } else {
-      setCurRoomId(id);
+      // setCurRoomId(id);
       await startCall();
     }
 
@@ -184,8 +189,7 @@ const ChatRoomList = ({
                     onClick={(e) => {
                       e.preventDefault();
                       setTargetRoomId(chatRoom.id);
-                      if (chatRoom.isPrivate) handleOpen();
-                      else handleEnter(chatRoom.id);
+                      handleEnter(chatRoom.id);
                     }}
                   >
                     <MdChevronRight className="h-6 w-6 text-gray-400 font-thin" />
