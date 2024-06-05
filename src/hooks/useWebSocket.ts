@@ -16,7 +16,7 @@ const URL = `ws://${import.meta.env.VITE_SERVER_URL}/ws`;
 
 export const useWebSocket = () => {
   const token = useAtomValue(tokenAtom);
-  const userId = useAtomValue(userIdAtom);
+  const [userId, setUserId] = useAtom(userIdAtom);
   const [socket, setSocket] = useAtom(socketAtom);
   const setMessages = useSetAtom(messagesAtom);
   const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
@@ -101,7 +101,7 @@ export const useWebSocket = () => {
 
       ws.onclose = () => {
         endCall();
-        // setCurRoomId(0);
+        setUserId(undefined);
         console.log("WebSocket is closed now.");
       };
 
