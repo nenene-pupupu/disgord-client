@@ -13,6 +13,7 @@ import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 import { IoAdd } from "react-icons/io5";
 import ChatRoomList from "./ChatRoomList";
+import { useNavigate } from "react-router-dom";
 
 interface WebSocketProps {
   startCall: () => void;
@@ -27,6 +28,7 @@ const ChatSideLayout = ({ changeRoom, startCall }: WebSocketProps) => {
   const [chatrooms, setChatrooms] = useState<Chatroom[] | null>(null);
   const token = useAtomValue(tokenAtom);
   const targetRoomId = useAtomValue(targetRoomIdAtom);
+  const navigator = useNavigate();
 
   useEffect(() => {
     fetchChatrooms();
@@ -34,7 +36,6 @@ const ChatSideLayout = ({ changeRoom, startCall }: WebSocketProps) => {
   }, []);
 
   const fetchChatrooms = async () => {
-    if (!token) return;
     try {
       const res: Chatroom[] = await getChatrooms();
       setChatrooms(res);
@@ -44,7 +45,11 @@ const ChatSideLayout = ({ changeRoom, startCall }: WebSocketProps) => {
   };
 
   const handleCreate = async () => {
-    if (!token) return;
+    if (!token) {
+      alert("Please login!");
+      navigator("/login");
+      return;
+    }
     if (name.trim() === "") {
       alert("Enter channel name");
       return;
@@ -59,7 +64,12 @@ const ChatSideLayout = ({ changeRoom, startCall }: WebSocketProps) => {
   };
 
   const handleDelete = async () => {
-    if (!token || !targetRoomId) return;
+    if (!token) {
+      alert("Please login!");
+      navigator("/login");
+      return;
+    }
+
     try {
       await delChatroom(token, targetRoomId);
       fetchChatrooms();
@@ -70,7 +80,11 @@ const ChatSideLayout = ({ changeRoom, startCall }: WebSocketProps) => {
   };
 
   const handleModify = async () => {
-    if (!token || !targetRoomId) return;
+    if (!token) {
+      alert("Please login!");
+      navigator("/login");
+      return;
+    }
     try {
       await modChatroom(token, targetRoomId, name, password);
       fetchChatrooms();
@@ -175,11 +189,13 @@ const ChatSideLayout = ({ changeRoom, startCall }: WebSocketProps) => {
 
       <div className="flex mt-4 mb-2">
         <h2 className="text-2xl flex-auto">Channels</h2>
-        <Tooltip message="Add Room">
-          <button onClick={handleAddOpen}>
-            <IoAdd className="h-8 w-8 text-gray-400" />
-          </button>
-        </Tooltip>
+        {token && (
+          <Tooltip message="Add Room">
+            <button onClick={handleAddOpen}>
+              <IoAdd className="h-8 w-8 text-gray-400" />
+            </button>
+          </Tooltip>
+        )}
       </div>
 
       <ChatRoomList
