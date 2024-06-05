@@ -61,6 +61,17 @@ VITE_SERVER_URL = "localhost:8080"
 npm run dev
 ```
 
-Vite will tell you where to access.
+5. Access the application at http://localhost:5173
+
+> Note: Because of audio, webcam, cookie access, you must access through this URL
 
 > Tip: Press **o** with the shortcut key and the browser will turn on immediately
+
+## Mockup
+
+![1](public/1.png)
+![2](public/2.png)
+![3](public/3.png)
+![4](public/4.png)
+![5](public/5.png)
+![6](public/6.png)
