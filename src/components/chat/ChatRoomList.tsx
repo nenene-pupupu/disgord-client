@@ -68,7 +68,7 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
         }),
       },
     );
-    if (!res.ok) {
+    if (res && !res.ok) {
       console.error("Fail to join room", chatroomId);
     }
   };

@@ -26,13 +26,18 @@ export default function Profile() {
 
   useEffect(() => {
     const fetchUsersMe = async () => {
-      if (!token) return;
+      if (!token) {
+        alert("Please log in!");
+        navigate("/login");
+        return;
+      }
       try {
         const data = await getUsersMe(token);
-        setDisplayName(data.displayName);
-        setUserName(data.username);
-        setProfileColorIndex(data.profileColorIndex);
-        console.log(data);
+        if (data) {
+          setDisplayName(data.displayName);
+          setUserName(data.username);
+          setProfileColorIndex(data.profileColorIndex);
+        }
       } catch (error) {
         alert((error as Error).message);
       }

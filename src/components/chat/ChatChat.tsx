@@ -33,13 +33,14 @@ const ChatChat = ({ sendMessage, appendMessages }: WebSocketProps) => {
         token,
         `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chats?chatroomId=${curRoomId}`,
       );
-      if (!res.ok) {
+      if (res && res.ok) {
+        const data: SockMessage[] = await res.json();
+        appendMessages(data);
+        shouldScrollToBottom.current = true;
+        scrollToBottom();
+      } else {
         throw new Error("Failed to fetch chat messages");
       }
-      const data: SockMessage[] = await res.json();
-      appendMessages(data);
-      shouldScrollToBottom.current = true;
-      scrollToBottom();
     };
     getChat();
     // eslint-disable-next-line react-hooks/exhaustive-deps

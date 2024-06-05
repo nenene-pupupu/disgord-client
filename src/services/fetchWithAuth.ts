@@ -18,6 +18,12 @@ export const fetchWithAuth = async (
       headers,
     });
 
+    if (response.status === 401) {
+      alert("Please log in!");
+      window.location.href = "/login";
+      return;
+    }
+
     return response;
   } catch (error) {
     console.error("fetchWithAuth error", error);

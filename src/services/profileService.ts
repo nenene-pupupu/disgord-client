@@ -3,15 +3,21 @@ import { fetchWithAuth } from "./fetchWithAuth";
 
 const API_URL = `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/users/me`;
 
-export const getUsersMe = async (token: string) => {
+export const getUsersMe = async (token: string | null) => {
+  if (!token) {
+    alert("Please log in!");
+    window.location.href = "/login";
+    return;
+  }
   const res = await fetchWithAuth(token, API_URL, {});
-  if (!res.ok) {
+  if (res && res.ok) {
+    const data: User = await res.json();
+    console.log(data);
+
+    return data;
+  } else {
     throw new Error("Failed to fetch me");
   }
-  const data: User = await res.json();
-  console.log(data);
-
-  return data;
 };
 
 interface RequestBody {
@@ -28,31 +34,34 @@ export const modUsersMe = async (
   if (password != "") {
     body.password = password;
   }
-
-  const res = await fetchWithAuth(token, API_URL, {
-    method: "PATCH",
-    body: JSON.stringify(body),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  if (res.status != 200) {
-    const errorData = await res.json();
-    throw new Error(errorData.message);
+  try {
+    const res = await fetchWithAuth(token, API_URL, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    });
+    if (res && res.status == 200) {
+      const data: User = await res.json();
+      console.log(data);
+    } else {
+      throw new Error("Failed to modify profile");
+    }
+  } catch (err) {
+    console.error(err);
   }
-  const data: User = await res.json();
-  console.log(data);
 };
 
 export const delUsersMe = async (token: string, password: string) => {
-  const res = await fetchWithAuth(token, API_URL, {
-    method: "DELETE",
-    body: JSON.stringify({ password }),
-  });
-  if (res.status != 204) {
-    const errorData = await res.json();
-    throw new Error(errorData.message);
+  try {
+    const res = await fetchWithAuth(token, API_URL, {
+      method: "DELETE",
+      body: JSON.stringify({ password }),
+    });
+    if (res && res.status == 204) {
+      return true;
+    } else {
+      throw new Error("Failed to delete account");
+    }
+  } catch (err) {
+    console.error(err);
   }
-
-  return true;
 };

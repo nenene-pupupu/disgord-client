@@ -16,15 +16,16 @@ export const useChatrooms = () => {
     const fetchChatrooms = async () => {
       if (token) {
         try {
-          const response = await fetchWithAuth(
+          const res = await fetchWithAuth(
             token,
             `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms`,
           );
-          if (!response.ok) {
+          if (res && res.ok) {
+            const result = await res.json();
+            setData(result);
+          } else {
             throw new Error("Failed to fetch chatrooms");
           }
-          const result = await response.json();
-          setData(result);
         } catch (err) {
           if (err instanceof Error) {
             setError(err.message);
@@ -47,11 +48,6 @@ export const getChatrooms = async () => {
   const res = await fetch(
     `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms`,
   );
-
-  // const res = await fetchWithAuth(
-  //   token,
-  //   `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms`,
-  // );
   if (res.status != 200) {
     const errorData = await res.json();
     throw new Error(errorData.message);
@@ -65,20 +61,24 @@ export const addChatroom = async (
   name: string,
   password: string,
 ) => {
-  const res = await fetchWithAuth(
-    token,
-    `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms`,
-    {
-      method: "POST",
-      body: JSON.stringify({ name, password }),
-    },
-  );
-  if (res.status != 201) {
-    const errorData = await res.json();
-    throw new Error(errorData.message);
+  try {
+    const res = await fetchWithAuth(
+      token,
+      `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms`,
+      {
+        method: "POST",
+        body: JSON.stringify({ name, password }),
+      },
+    );
+    if (res && res.status === 201) {
+      const data: Chatroom = await res.json();
+      return data;
+    } else {
+      throw new Error("Fail to add chatroom");
+    }
+  } catch (err) {
+    console.error(err);
   }
-  const data: Chatroom = await res.json();
-  return data;
 };
 
 export const delChatroom = async (token: string, target: number) => {
@@ -89,11 +89,11 @@ export const delChatroom = async (token: string, target: number) => {
       method: "DELETE",
     },
   );
-  if (res.status != 204) {
-    const errorData = await res.json();
-    throw new Error(errorData.message);
+  if (res && res.status === 204) {
+    return true;
+  } else {
+    throw new Error("Fail to delete chatroom");
   }
-  return true;
 };
 
 export const modChatroom = async (
@@ -113,10 +113,9 @@ export const modChatroom = async (
       }),
     },
   );
-  if (res.status != 200) {
-    const errorData = await res.json();
-    throw new Error(errorData.message);
+  if (res && res.status === 200) {
+    const data: Chatroom = await res.json();
+    return data;
   }
-  const data: Chatroom = await res.json();
-  return data;
+  throw new Error("Failed to modify chatroom");
 };
