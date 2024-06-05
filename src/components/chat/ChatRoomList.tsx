@@ -2,12 +2,6 @@ import { IconSky } from "@/assets/svg";
 import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
 import { audioOnAtom, videoOnAtom } from "@/atoms/ParticipantAtom";
 import { curRoomIdAtom, targetRoomIdAtom } from "@/atoms/WebSocketAtom";
-import {
-  addChatroom,
-  delChatroom,
-  getChatrooms,
-  modChatroom,
-} from "@/services/chatService";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { Chatroom } from "@/types";
 import Modal from "@components/common/Modal";
@@ -27,10 +21,10 @@ interface WebSocketProps {
 
 const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
   const [open, setOpen] = useState(false);
-  const [type, setType] = useState("");
-  const [name, setName] = useState("");
+  // const [type, setType] = useState("");
+  // const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [chatrooms, setChatrooms] = useState<Chatroom[] | null>(null);
+  // const [chatrooms, setChatrooms] = useState<Chatroom[] | null>(null);
 
   const token = useAtomValue(tokenAtom);
   const userId = useAtomValue(userIdAtom);
@@ -40,19 +34,7 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
   const audioOn = useAtomValue(audioOnAtom);
   const setVideoOn = useSetAtom(videoOnAtom);
 
-  useEffect(() => {
-    fetchChatrooms();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const fetchChatrooms = async () => {
-    try {
-      const res: Chatroom[] = await getChatrooms();
-      setChatrooms(res);
-    } catch (error) {
-      alert((error as Error).message);
-    }
-  };
+  const navigator = useNavigate();
 
   const joinRoom = async (chatroomId: number) => {
     setVideoOn(false);
@@ -71,9 +53,9 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
     if (res && !res.ok) {
       console.error("Fail to join room", chatroomId);
     }
+    handleClose();
   };
 
-  const navigator = useNavigate();
   const handleEnter = async (id: number) => {
     if (!token || !userId) {
       alert("Please login!");
@@ -94,60 +76,14 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
     }
   };
 
-  const handleCreate = async () => {
-    if (!token) {
-      alert("Please login!");
-      navigator("/login");
-      return;
-    }
-    if (name.trim() === "") {
-      alert("Enter channel name");
-      return;
-    }
-    try {
-      await addChatroom(token, name, password);
-      fetchChatrooms();
-    } catch (error) {
-      alert((error as Error).message);
-    }
-    handleClose();
-  };
-
-  const handleDelete = async () => {
-    if (!token || !targetRoomId) {
-      alert("Please login!");
-      navigator("/login");
-      return;
-    }
-    try {
-      await delChatroom(token, targetRoomId);
-      fetchChatrooms();
-    } catch (error) {
-      alert((error as Error).message);
-    }
-    handleClose();
-  };
-
-  const handleModify = async () => {
-    if (!token || !targetRoomId) return;
-    try {
-      await modChatroom(token, targetRoomId, name, password);
-      fetchChatrooms();
-    } catch (error) {
-      alert((error as Error).message);
-    }
-    handleClose();
-  };
-
   const handleClose = () => {
     setName("");
     setPassword("");
     setOpen(false);
   };
 
-  const handleAddOpen = () => {
+  const handleOpen = () => {
     setOpen(true);
-    setType("add");
   };
 
   const handleModifyOpen = () => {
@@ -226,18 +162,6 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
           </div>
         </div>
       </Modal>
-
-      <div className="flex mt-4 mb-2">
-        <h2 className="text-2xl flex-auto">Channels</h2>
-        {token && (
-          <Tooltip message="Add Room">
-            <button onClick={handleAddOpen}>
-              <IoAdd className="h-8 w-8 text-gray-400" />
-            </button>
-          </Tooltip>
-        )}
-      </div>
-
       <ul
         role="list"
         className="divide-y divide-gray-100 overflow-y-scroll w-60"

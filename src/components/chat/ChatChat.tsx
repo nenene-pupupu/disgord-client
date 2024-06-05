@@ -5,7 +5,7 @@ import { SockMessage } from "@/types";
 import parseTime from "@/utils/parseTime";
 import ProfileIcon from "@components/common/ProfileIcon";
 // import ProfileIcon from "@components/common/ProfileIcon";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useRef, useState } from "react";
 
 interface WebSocketProps {
@@ -41,6 +41,10 @@ const ChatChat = ({ sendMessage, appendMessages }: WebSocketProps) => {
       } else {
         throw new Error("Failed to fetch chat messages");
       }
+      const data: SockMessage[] = await res.json();
+      setMessages([...data]);
+      shouldScrollToBottom.current = true;
+      scrollToBottom();
     };
     getChat();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,6 +106,11 @@ const ChatChat = ({ sendMessage, appendMessages }: WebSocketProps) => {
       container.clientHeight + 100;
     shouldScrollToBottom.current = isAtBottom;
   };
+
+  // const parseTime = (timestamp: string) => {
+  //   const time = timestamp.split("T")[1].substring(0, 5);
+  //   return time;
+  // };
 
   return (
     <div className="flex flex-col h-full overflow-y-auto">

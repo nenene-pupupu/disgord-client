@@ -1,4 +1,4 @@
-import { SockMessage, SockClient } from "@/types";
+import { SockClient, SockMessage } from "@/types";
 import { atom } from "jotai";
 
 export const curRoomIdAtom = atom<number>(0);
