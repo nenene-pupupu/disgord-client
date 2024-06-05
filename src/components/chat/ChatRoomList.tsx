@@ -29,6 +29,7 @@ const ChatRoomList = ({
 }: WebSocketProps) => {
   const [open, setOpen] = useState(false);
   const [password, setPassword] = useState("");
+  const [wrongPwd, setWrongPwd] = useState(false);
 
   const token = useAtomValue(tokenAtom);
   const userId = useAtomValue(userIdAtom);
@@ -57,10 +58,17 @@ const ChatRoomList = ({
     if (res && !res.ok) {
       console.error("Fail to join room", chatroomId);
       if (res && res.status == 403) {
-        handleOpen();
+        if (wrongPwd) {
+          alert("Wrong password!");
+          setPassword("");
+        } else {
+          setWrongPwd(true);
+          handleOpen();
+        }
       }
     } else {
       setCurRoomId(chatroomId);
+      setWrongPwd(false);
       handleClose();
     }
   };
