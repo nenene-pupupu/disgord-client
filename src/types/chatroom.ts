@@ -4,4 +4,5 @@ export interface Chatroom {
   name: string;
   ownerId: number;
   password: string;
+  isPrivate: boolean;
 }

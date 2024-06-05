@@ -4,16 +4,14 @@ import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { SockMessage } from "@/types";
 import parseTime from "@/utils/parseTime";
 import ProfileIcon from "@components/common/ProfileIcon";
-// import ProfileIcon from "@components/common/ProfileIcon";
 import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useRef, useState } from "react";
 
 interface WebSocketProps {
   sendMessage: (message: SockMessage) => void;
-  appendMessages: (messages: SockMessage[]) => void;
 }
 
-const ChatChat = ({ sendMessage, appendMessages }: WebSocketProps) => {
+const ChatChat = ({ sendMessage }: WebSocketProps) => {
   const chatRef = useRef<HTMLInputElement>(null);
   const [isSending, setIsSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -22,8 +20,7 @@ const ChatChat = ({ sendMessage, appendMessages }: WebSocketProps) => {
 
   const token = useAtomValue(tokenAtom);
   const userId = useAtomValue(userIdAtom);
-
-  const messages = useAtomValue(messagesAtom);
+  const [messages, setMessages] = useAtom(messagesAtom);
   const curRoomId = useAtomValue(curRoomIdAtom);
 
   useEffect(() => {
@@ -35,14 +32,12 @@ const ChatChat = ({ sendMessage, appendMessages }: WebSocketProps) => {
       );
       if (res && res.ok) {
         const data: SockMessage[] = await res.json();
-        appendMessages(data);
+        setMessages([...data]);
         shouldScrollToBottom.current = true;
         scrollToBottom();
       } else {
         throw new Error("Failed to fetch chat messages");
       }
-      const data: SockMessage[] = await res.json();
-      setMessages([...data]);
       shouldScrollToBottom.current = true;
       scrollToBottom();
     };
@@ -106,11 +101,6 @@ const ChatChat = ({ sendMessage, appendMessages }: WebSocketProps) => {
       container.clientHeight + 100;
     shouldScrollToBottom.current = isAtBottom;
   };
-
-  // const parseTime = (timestamp: string) => {
-  //   const time = timestamp.split("T")[1].substring(0, 5);
-  //   return time;
-  // };
 
   return (
     <div className="flex flex-col h-full overflow-y-auto">

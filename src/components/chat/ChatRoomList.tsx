@@ -7,8 +7,8 @@ import { Chatroom } from "@/types";
 import Modal from "@components/common/Modal";
 import Tooltip from "@components/common/Tooltip";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useEffect, useState } from "react";
-import { IoAdd, IoCreateOutline, IoLockClosed } from "react-icons/io5";
+import { useState } from "react";
+import { IoCreateOutline, IoLockClosed } from "react-icons/io5";
 import { MdChevronRight } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
@@ -17,14 +17,18 @@ const API_URL = `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VIT
 interface WebSocketProps {
   startCall: () => void;
   changeRoom: (newRoomId: number) => void;
+  chatrooms: Chatroom[] | null;
+  handleModifyOpen: (open: boolean, type: string, name: string) => void;
 }
 
-const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
+const ChatRoomList = ({
+  changeRoom,
+  startCall,
+  chatrooms,
+  handleModifyOpen,
+}: WebSocketProps) => {
   const [open, setOpen] = useState(false);
-  // const [type, setType] = useState("");
-  // const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  // const [chatrooms, setChatrooms] = useState<Chatroom[] | null>(null);
 
   const token = useAtomValue(tokenAtom);
   const userId = useAtomValue(userIdAtom);
@@ -77,7 +81,6 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
   };
 
   const handleClose = () => {
-    setName("");
     setPassword("");
     setOpen(false);
   };
@@ -86,79 +89,44 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
     setOpen(true);
   };
 
-  const handleModifyOpen = () => {
-    setOpen(true);
-    setType("modify");
-  };
-
   return (
-    <div className="flex flex-col">
+    <>
       <Modal
         open={open}
         onClose={handleClose}
-        title={type === "add" ? "Create New Channel" : "Modify Channel"}
-        actions={
-          type === "add"
-            ? [
-                {
-                  text: "Create",
-                  onClick: handleCreate,
-                  className: "bg-blue-500 text-white hover:bg-blue-400 ml-3",
-                },
-                { text: "Cancel", onClick: handleClose },
-              ]
-            : [
-                {
-                  text: "Modify",
-                  onClick: handleModify,
-                  className: "bg-red-600 text-white hover:bg-red-500 ml-3",
-                },
-                { text: "Cancel", onClick: handleClose },
-                {
-                  text: "Channel Delete",
-                  onClick: handleDelete,
-                  className:
-                    "border-none shadow-none font-normal text-gray-400 text-sm mr-auto underline",
-                },
-              ]
-        }
+        title="Enter Password"
+        actions={[
+          {
+            text: "Enter",
+            onClick: () => {
+              handleEnter(targetRoomId);
+              console.log(targetRoomId);
+            },
+            className: "bg-red-600 text-white hover:bg-red-500 ml-3",
+          },
+          {
+            text: "Cancel",
+            onClick: handleClose,
+          },
+        ]}
       >
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-900">
-              Channel name
+        <div>
+          <div className="flex item-center justify-between">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-900"
+            >
+              Password
             </label>
-            <div className="mt-2">
-              <input
-                name="id"
-                type="text"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter channel name"
-                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
-              />
-            </div>
           </div>
-
-          <div>
-            <div className="flex item-center justify-between">
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-900"
-              >
-                Password
-              </label>
-            </div>
-            <div className="mt-2">
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password (optional)"
-                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
-              />
-            </div>
+          <div className="mt-2">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
+              className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
+            />
           </div>
         </div>
       </Modal>
@@ -195,7 +163,7 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
                   >
                     {chatRoom.name}
                   </p>
-                  {chatRoom.password && (
+                  {chatRoom.isPrivate && (
                     <IoLockClosed className="text-gray-400" />
                   )}
                 </div>
@@ -205,8 +173,7 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
                   <button
                     onClick={() => {
                       setTargetRoomId(chatRoom.id);
-                      setName(chatRoom.name);
-                      handleModifyOpen();
+                      handleModifyOpen(true, "modify", chatRoom.name);
                     }}
                   >
                     <IoCreateOutline className="h-6 w-6 text-gray-400 font-thin" />
@@ -216,7 +183,9 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      handleEnter(chatRoom.id);
+                      setTargetRoomId(chatRoom.id);
+                      if (chatRoom.isPrivate) handleOpen();
+                      else handleEnter(chatRoom.id);
                     }}
                   >
                     <MdChevronRight className="h-6 w-6 text-gray-400 font-thin" />
@@ -227,7 +196,7 @@ const ChatRoomList = ({ changeRoom, startCall }: WebSocketProps) => {
           ))
         )}
       </ul>
-    </div>
+    </>
   );
 };
 

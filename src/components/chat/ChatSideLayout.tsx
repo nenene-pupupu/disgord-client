@@ -50,8 +50,7 @@ const ChatSideLayout = ({ changeRoom, startCall }: WebSocketProps) => {
       return;
     }
     try {
-      const res: Chatroom = await addChatroom(token, name, password);
-      console.log(res);
+      await addChatroom(token, name, password);
       fetchChatrooms();
     } catch (error) {
       alert((error as Error).message);

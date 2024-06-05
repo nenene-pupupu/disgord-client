@@ -117,10 +117,6 @@ export const useWebSocket = () => {
     socket?.send(JSON.stringify(message));
   };
 
-  const appendMessages = (messages: SockMessage[]) => {
-    setMessages([...messages]);
-  };
-
   const getLocalStream = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -253,6 +249,5 @@ export const useWebSocket = () => {
     startCall,
     endCall,
     sendMessage,
-    appendMessages,
   };
 };
