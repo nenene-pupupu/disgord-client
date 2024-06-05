@@ -3,6 +3,7 @@ import { audioOnAtom, soundOnAtom, videoOnAtom } from "@/atoms/ParticipantAtom";
 import {
   curRoomIdAtom,
   localStreamAtom,
+  participantsAtom,
   remoteStreamsAtom,
 } from "@/atoms/WebSocketAtom";
 import { SockMessage } from "@/types";
@@ -32,7 +33,7 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
 
   const userId = useAtomValue(userIdAtom);
   const setCurRoomId = useSetAtom(curRoomIdAtom);
-
+  const participants = useAtomValue(participantsAtom);
   const localStream = useAtomValue(localStreamAtom);
   const remoteStreams = useAtomValue(remoteStreamsAtom);
 
@@ -155,24 +156,57 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
             gridTemplateColumns: getGridTemplate(participantsCount),
           }}
         >
-          <video
-            ref={localVideoRef}
-            autoPlay
-            muted
-            className={`w-full h-full rounded-xl transform scale-x-[-1] object-cover ${
-              participantsCount === 1 ? "w-3/4 h-3/4" : "w-full h-full"
-            }`}
-          ></video>
-          {remoteStreams.map((_, index) => (
+          <div className="relative">
             <video
-              key={index}
-              ref={(el) => {
-                remoteVideoRefs.current[index] = el;
-              }}
+              ref={localVideoRef}
               autoPlay
-              className="w-full h-full rounded-xl transform scale-x-[-1] object-cover"
+              muted
+              className={`w-full h-full rounded-xl transform scale-x-[-1] object-cover ${
+                participantsCount === 1 ? "w-3/4 h-3/4" : "w-full h-full"
+              }`}
             ></video>
-          ))}
+            <div className="absolute bottom-0 right-2 w-full text-white p-2 text-right rounded-b-xl">
+              You
+            </div>
+          </div>
+          {remoteStreams.map((stream, idx) => {
+            const streamId = stream.id;
+            const participant = participants?.find(
+              (p) => p.streamId === streamId,
+            );
+            console.log(idx, streamId);
+            return (
+              <div key={streamId} className="relative">
+                <video
+                  ref={(el) => {
+                    remoteVideoRefs.current[idx] = el;
+                  }}
+                  autoPlay
+                  className="w-full h-full rounded-xl transform scale-x-[-1] object-cover"
+                ></video>
+                {participant && (
+                  <div className="absolute bottom-0 right-2 w-full text-white p-2 text-right rounded-b-xl">
+                    {participant.displayName}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          {/* {remoteStreams.map((v, index) => (
+            <div className="relative">
+              <video
+                key={index}
+                ref={(el) => {
+                  remoteVideoRefs.current[index] = el;
+                }}
+                autoPlay
+                className="w-full h-full rounded-xl transform scale-x-[-1] object-cover"
+              ></video>
+              <div className="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 text-white p-2 text-center rounded-b-xl">
+                {participants[v.id].displayName}
+              </div>
+            </div>
+          ))} */}
         </div>
       </div>
       <div className="flex gap-8 justify-center">
