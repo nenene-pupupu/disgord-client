@@ -43,7 +43,7 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
   }, [localStream]);
 
   useEffect(() => {
-    console.log("remote restream changed", remoteStreams);
+    console.log("remote streams changed", remoteStreams);
     remoteStreams.forEach((stream, index) => {
       const videoElement = remoteVideoRefs.current[index];
       if (videoElement) {
@@ -76,31 +76,47 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
     setCurRoomId(0);
   };
 
-  const handleAudioMute = () => {
-    localStream
-      ?.getAudioTracks()
-      .forEach((track) => (track.enabled = !track.enabled));
+  const toggleTrackState = (tracks: MediaStreamTrack[], enabled: boolean) => {
+    tracks.forEach((track) => (track.enabled = enabled));
+  };
+
+  const sendActionMessage = (action: string) => {
     sendMessage({
       chatroomId: curRoomId,
       senderId: userId!,
-      action: audioOn ? "MUTE" : "UNMUTE",
+      action,
     });
+  };
+
+  const handleAudioMute = () => {
+    toggleTrackState(localStream?.getAudioTracks() || [], !audioOn);
+    sendActionMessage(audioOn ? "MUTE" : "UNMUTE");
     setAudioOn((prev) => !prev);
   };
 
   const handleVideoMute = () => {
-    localStream
-      ?.getVideoTracks()
-      .forEach((track) => (track.enabled = !track.enabled));
-    sendMessage({
-      chatroomId: curRoomId,
-      senderId: userId!,
-      action: videoOn ? "TURN_ON_CAM" : "TURN_OFF_CAM",
-    });
+    toggleTrackState(localStream?.getVideoTracks() || [], !videoOn);
+    sendActionMessage(videoOn ? "TURN_OFF_CAM" : "TURN_ON_CAM");
     setVideoOn((prev) => !prev);
   };
 
-  const handleSoundMute = () => setSoundOn((prev) => !prev);
+  const toggleRemoteAudio = (enabled: boolean) => {
+    remoteStreams.forEach((stream) => {
+      toggleTrackState(stream.getAudioTracks(), enabled);
+    });
+  };
+
+  const handleSoundMute = () => {
+    const newSoundOn = !soundOn;
+    toggleTrackState(localStream?.getAudioTracks() || [], newSoundOn);
+    toggleTrackState(localStream?.getVideoTracks() || [], newSoundOn);
+    toggleRemoteAudio(newSoundOn);
+    sendActionMessage(newSoundOn ? "TURN_ON_CAM" : "TURN_OFF_CAM");
+    sendActionMessage(newSoundOn ? "UNMUTE" : "MUTE");
+    setSoundOn(newSoundOn);
+    setAudioOn(newSoundOn);
+    setVideoOn(newSoundOn);
+  };
 
   return (
     <div className="bg-gray-200 rounded-lg w-full flex flex-col gap-4 p-4">

@@ -37,7 +37,7 @@ export const useWebSocket = () => {
 
       ws.onmessage = async (event) => {
         const message: SockMessage = JSON.parse(event.data);
-        console.log(message);
+        console.log("message", message);
         switch (message.action) {
           case "SEND_TEXT":
             console.log("send text", message);
