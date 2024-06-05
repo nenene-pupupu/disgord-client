@@ -114,28 +114,17 @@ export const modChatroom = async (
   name: string,
   password: string,
 ) => {
-  let res;
-
-  if (password == "")
-    res = await fetchWithAuth(
-      token,
-      `http://${import.meta.env.VITE_SERVER_URL}/chatrooms/${target}/public`,
-      {
-        method: "PATCH",
-      },
-    );
-  else
-    res = await fetchWithAuth(
-      token,
-      `http://${import.meta.env.VITE_SERVER_URL}/chatrooms/${target}`,
-      {
-        method: "PATCH",
-        body: JSON.stringify({
-          name,
-          password,
-        }),
-      },
-    );
+  const res = await fetchWithAuth(
+    token,
+    `http://${import.meta.env.VITE_SERVER_URL}/chatrooms/${target}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        name,
+        password,
+      }),
+    },
+  );
 
   if (res && res.status === 200) {
     const data: Chatroom = await res.json();

@@ -32,18 +32,6 @@ const Modal = ({ open, onClose, title, children, actions }: ModalProp) => {
                   {action.text}
                 </button>
               ))}
-              {/* <button
-                onClick={actions[0].onClick}
-                className="justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 ml-3"
-              >
-                {actions[0].text}
-              </button>
-              <button
-                onClick={actions[1].onClick}
-                className="justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              >
-                {actions[1].text}
-              </button> */}
             </div>
           </Dialog.Panel>
         </div>

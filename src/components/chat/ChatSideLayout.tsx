@@ -179,7 +179,7 @@ const ChatSideLayout = ({ changeRoom, startCall }: WebSocketProps) => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password (optional)"
+                placeholder="If you don't fill this place, the room will be public"
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
               />
             </div>
