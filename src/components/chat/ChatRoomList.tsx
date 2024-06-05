@@ -50,7 +50,7 @@ const ChatRoomList = ({
         body: JSON.stringify({
           password: "",
           camOn: false,
-          muted: audioOn,
+          muted: !audioOn,
         }),
       },
     );

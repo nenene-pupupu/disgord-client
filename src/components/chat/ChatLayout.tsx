@@ -62,6 +62,22 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (localStream) {
+      toggleTrackState(localStream.getAudioTracks(), audioOn);
+    }
+    sendActionMessage(audioOn ? "UNMUTE" : "MUTE");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audioOn]);
+
+  useEffect(() => {
+    if (localStream) {
+      toggleTrackState(localStream.getVideoTracks(), videoOn);
+    }
+    sendActionMessage(videoOn ? "TURN_ON_CAM" : "TURN_OFF_CAM");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoOn]);
+
   const handleExit = () => {
     if (!userId) return;
 
@@ -84,14 +100,10 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
   };
 
   const handleAudioMute = () => {
-    toggleTrackState(localStream?.getAudioTracks() || [], !audioOn);
-    sendActionMessage(audioOn ? "MUTE" : "UNMUTE");
     setAudioOn((prev) => !prev);
   };
 
   const handleVideoMute = () => {
-    toggleTrackState(localStream?.getVideoTracks() || [], !videoOn);
-    sendActionMessage(videoOn ? "TURN_OFF_CAM" : "TURN_ON_CAM");
     setVideoOn((prev) => !prev);
   };
 
@@ -106,8 +118,6 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
     toggleTrackState(localStream?.getAudioTracks() || [], newSoundOn);
     toggleTrackState(localStream?.getVideoTracks() || [], newSoundOn);
     toggleRemoteAudio(newSoundOn);
-    sendActionMessage(newSoundOn ? "TURN_ON_CAM" : "TURN_OFF_CAM");
-    sendActionMessage(newSoundOn ? "UNMUTE" : "MUTE");
     setSoundOn(newSoundOn);
     setAudioOn(newSoundOn);
     setVideoOn(newSoundOn);
@@ -138,7 +148,9 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
       </div>
       <div className="flex-1 flex justify-center items-center overflow-y-auto">
         <div
-          className={`grid gap-4 justify-center w-full ${participantsCount === 1 ? "place-items-center" : ""}`}
+          className={`grid gap-4 justify-center w-full ${
+            participantsCount === 1 ? "place-items-center" : ""
+          }`}
           style={{
             gridTemplateColumns: getGridTemplate(participantsCount),
           }}
@@ -147,7 +159,9 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
             ref={localVideoRef}
             autoPlay
             muted
-            className={`w-full h-full rounded-xl transform scale-x-[-1] object-cover ${participantsCount === 1 ? "w-3/4 h-3/4" : "w-full h-full"}`}
+            className={`w-full h-full rounded-xl transform scale-x-[-1] object-cover ${
+              participantsCount === 1 ? "w-3/4 h-3/4" : "w-full h-full"
+            }`}
           ></video>
           {remoteStreams.map((_, index) => (
             <video
