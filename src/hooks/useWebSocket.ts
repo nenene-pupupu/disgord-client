@@ -163,8 +163,6 @@ export const useWebSocket = () => {
       console.log(event);
       setRemoteStreams((prev) => [...prev, event.streams[0]]);
 
-      /* TODO */
-      // 제대로 지워지는 지 확인
       event.streams[0].onremovetrack = () => {
         setRemoteStreams((prev) =>
           prev.filter((s) => s.id !== event.streams[0].id),
@@ -220,6 +218,11 @@ export const useWebSocket = () => {
         return;
       }
       setRemoteStreams((prev) => [...prev, event.streams[0]]);
+      event.streams[0].onremovetrack = () => {
+        setRemoteStreams((prev) =>
+          prev.filter((s) => s.id !== event.streams[0].id),
+        );
+      };
     };
 
     pc.current.onicecandidate = (event) => {

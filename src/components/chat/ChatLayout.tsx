@@ -43,7 +43,6 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
   }, [localStream]);
 
   useEffect(() => {
-    console.log("remote streams changed", remoteStreams);
     remoteStreams.forEach((stream, index) => {
       const videoElement = remoteVideoRefs.current[index];
       if (videoElement) {
