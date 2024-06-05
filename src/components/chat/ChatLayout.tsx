@@ -133,12 +133,12 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
 
   const handleSoundMute = () => {
     const newSoundOn = !soundOn;
-    toggleTrackState(localStream?.getAudioTracks() || [], newSoundOn);
-    toggleTrackState(localStream?.getVideoTracks() || [], newSoundOn);
+    // toggleTrackState(localStream?.getAudioTracks() || [], newSoundOn);
+    // toggleTrackState(localStream?.getVideoTracks() || [], newSoundOn);
     toggleRemoteAudio(newSoundOn);
     setSoundOn(newSoundOn);
-    setAudioOn(newSoundOn);
-    setVideoOn(newSoundOn);
+    // setAudioOn(newSoundOn);
+    // setVideoOn(newSoundOn);
   };
 
   const getGridTemplate = (numParticipants: number) => {
