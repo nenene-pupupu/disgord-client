@@ -91,10 +91,14 @@ const ChatSideLayout = ({ changeRoom, startCall }: WebSocketProps) => {
     setType("add");
   };
 
-  const handleModifyOpen = (open: boolean, type: string, name: string) => {
+  const handleModifyOpen = (
+    open: boolean,
+    type: string,
+    chatRoom: Chatroom,
+  ) => {
     setOpen(open);
     setType(type);
-    setName(name);
+    setName(chatRoom.name);
   };
 
   return (

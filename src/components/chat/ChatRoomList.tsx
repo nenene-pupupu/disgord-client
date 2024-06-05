@@ -18,7 +18,7 @@ interface WebSocketProps {
   startCall: () => void;
   changeRoom: (newRoomId: number) => void;
   chatrooms: Chatroom[] | null;
-  handleModifyOpen: (open: boolean, type: string, name: string) => void;
+  handleModifyOpen: (open: boolean, type: string, chatRoom: Chatroom) => void;
 }
 
 const ChatRoomList = ({
@@ -178,7 +178,7 @@ const ChatRoomList = ({
                   <button
                     onClick={() => {
                       setTargetRoomId(chatRoom.id);
-                      handleModifyOpen(true, "modify", chatRoom.name);
+                      handleModifyOpen(true, "modify", chatRoom);
                     }}
                   >
                     <IoCreateOutline className="h-6 w-6 text-gray-400 font-thin" />
