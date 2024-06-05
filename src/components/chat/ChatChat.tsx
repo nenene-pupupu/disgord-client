@@ -14,6 +14,7 @@ interface WebSocketProps {
 const ChatChat = ({ sendMessage }: WebSocketProps) => {
   const chatRef = useRef<HTMLInputElement>(null);
   const [isSending, setIsSending] = useState(false);
+  const [isComposing, setIsComposing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const shouldScrollToBottom = useRef(true);
@@ -86,10 +87,18 @@ const ChatChat = ({ sendMessage }: WebSocketProps) => {
   };
 
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !isComposing) {
       e.preventDefault();
       await handleSendMessage();
     }
+  };
+
+  const handleCompositionStart = () => {
+    setIsComposing(true);
+  };
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false);
   };
 
   const handleScroll = () => {
@@ -145,6 +154,8 @@ const ChatChat = ({ sendMessage }: WebSocketProps) => {
           placeholder="Type a message..."
           className="p-4 bg-gray-100 rounded-tl-md w-full outline-none"
           onKeyDown={handleKeyDown}
+          onCompositionStart={handleCompositionStart}
+          onCompositionEnd={handleCompositionEnd}
         />
         <button
           onClick={handleSendMessage}
