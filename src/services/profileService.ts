@@ -1,7 +1,7 @@
 import { User } from "@/types";
 import { fetchWithAuth } from "./fetchWithAuth";
 
-const API_URL = `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/users/me`;
+const API_URL = `http://${import.meta.env.VITE_SERVER_URL}/users/me`;
 
 export const getUsersMe = async (token: string | null) => {
   if (!token) {

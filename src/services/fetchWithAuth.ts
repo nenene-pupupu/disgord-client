@@ -28,7 +28,7 @@ export const fetchWithAuth = async (
     if (response.status === 401) {
       // Try to refresh the token
       const refreshResponse = await fetch(
-        `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/auth/refresh`,
+        `http://${import.meta.env.VITE_SERVER_URL}/auth/refresh`,
         {
           method: "POST",
           credentials: "include",
@@ -47,13 +47,10 @@ export const fetchWithAuth = async (
         response = await makeRequest(newToken);
       } else {
         // If token refresh fails, log out the user
-        await fetch(
-          `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/auth/sign-out`,
-          {
-            method: "POST",
-            credentials: "include",
-          },
-        );
+        await fetch(`http://${import.meta.env.VITE_SERVER_URL}/auth/sign-out`, {
+          method: "POST",
+          credentials: "include",
+        });
         alert("Please log in!");
         localStorage.removeItem("accessToken");
         // window.location.href = "/login";

@@ -72,7 +72,7 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
     const getRoomInfo = async () => {
       const res = await fetchWithAuth(
         token,
-        `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms/${curRoomId}`,
+        `http://${import.meta.env.VITE_SERVER_URL}/chatrooms/${curRoomId}`,
       );
       const data = await res?.json();
       setRoomName(data.name);

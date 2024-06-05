@@ -52,8 +52,7 @@ npm install
    Create a .env file in the root directory and add the necessary environment variables.
 
 ```bash
-VITE_SERVER_URL = "localhost"
-VITE_SERVER_PORT = "8080"
+VITE_SERVER_URL = "localhost:8080"
 ```
 
 4. Start the development server:

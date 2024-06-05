@@ -12,7 +12,7 @@ import { IoCreateOutline, IoLockClosed } from "react-icons/io5";
 import { MdChevronRight } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}`;
+const API_URL = `http://${import.meta.env.VITE_SERVER_URL}`;
 
 interface WebSocketProps {
   startCall: () => void;

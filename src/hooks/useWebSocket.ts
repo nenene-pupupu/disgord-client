@@ -12,7 +12,7 @@ import { SockClient, SockMessage } from "@/types";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
 
-const URL = `ws://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/ws`;
+const URL = `ws://${import.meta.env.VITE_SERVER_URL}/ws`;
 
 export const useWebSocket = () => {
   const token = useAtomValue(tokenAtom);
@@ -100,11 +100,8 @@ export const useWebSocket = () => {
       };
 
       ws.onclose = () => {
-        if (curRoomId !== 0) {
-          sendMessage({
-            action: "LEAVE_ROOM",
-          });
-        }
+        endCall();
+        // setCurRoomId(0);
         console.log("WebSocket is closed now.");
       };
 
@@ -243,8 +240,10 @@ export const useWebSocket = () => {
     localStream?.getTracks().forEach((track) => track.stop());
     pc.current?.close();
     pc.current = null;
+    setCurRoomId(0);
     setLocalStream(null);
     setRemoteStreams([]);
+    setParticipants(null);
   };
 
   return {

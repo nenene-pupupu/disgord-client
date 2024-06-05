@@ -15,7 +15,7 @@ export const useAuth = () => {
       localStorage.setItem("accessToken", token);
       const res = await fetchWithAuth(
         token,
-        `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/users/me`,
+        `http://${import.meta.env.VITE_SERVER_URL}/users/me`,
       );
       if (res && res.ok) {
         const me: User = await res.json();
@@ -43,7 +43,7 @@ export const useAuth = () => {
       (async () => {
         const res = await fetchWithAuth(
           token,
-          `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/users/me`,
+          `http://${import.meta.env.VITE_SERVER_URL}/users/me`,
         );
         if (res && res.ok) {
           const me: User = await res.json();

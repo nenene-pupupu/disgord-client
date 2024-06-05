@@ -1,4 +1,4 @@
-const API_URL = `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}`;
+const API_URL = `http://${import.meta.env.VITE_SERVER_URL}`;
 
 export const signin = async (username: string, password: string) => {
   const response = await fetch(`${API_URL}/auth/sign-in`, {

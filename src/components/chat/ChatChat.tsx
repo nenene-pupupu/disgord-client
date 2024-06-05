@@ -29,7 +29,7 @@ const ChatChat = ({ sendMessage }: WebSocketProps) => {
       if (!token || !curRoomId) return;
       const res = await fetchWithAuth(
         token,
-        `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chats?chatroomId=${curRoomId}`,
+        `http://${import.meta.env.VITE_SERVER_URL}/chats?chatroomId=${curRoomId}`,
       );
       if (res && res.ok) {
         const data: SockMessage[] = await res.json();

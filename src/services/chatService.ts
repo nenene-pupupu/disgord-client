@@ -18,7 +18,7 @@ export const useChatrooms = () => {
         try {
           const res = await fetchWithAuth(
             token,
-            `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms`,
+            `http://${import.meta.env.VITE_SERVER_URL}/chatrooms`,
           );
           if (res && res.ok) {
             const result = await res.json();
@@ -46,7 +46,7 @@ export const useChatrooms = () => {
 
 export const getChatrooms = async () => {
   const res = await fetch(
-    `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms`,
+    `http://${import.meta.env.VITE_SERVER_URL}/chatrooms`,
   );
   if (res.status != 200) {
     const errorData = await res.json();
@@ -59,7 +59,7 @@ export const getChatrooms = async () => {
 export const getChatroom = async (token: string, target: number) => {
   const res = await fetchWithAuth(
     token,
-    `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms/${target}`,
+    `http://${import.meta.env.VITE_SERVER_URL}/chatrooms/${target}`,
   );
   if (res && res.status === 200) {
     const data: Chatroom = await res.json();
@@ -76,7 +76,7 @@ export const addChatroom = async (
   try {
     const res = await fetchWithAuth(
       token,
-      `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms`,
+      `http://${import.meta.env.VITE_SERVER_URL}/chatrooms`,
       {
         method: "POST",
         body: JSON.stringify({ name, password }),
@@ -96,7 +96,7 @@ export const addChatroom = async (
 export const delChatroom = async (token: string, target: number) => {
   const res = await fetchWithAuth(
     token,
-    `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms/${target}`,
+    `http://${import.meta.env.VITE_SERVER_URL}/chatrooms/${target}`,
     {
       method: "DELETE",
     },
@@ -119,7 +119,7 @@ export const modChatroom = async (
   if (password == "")
     res = await fetchWithAuth(
       token,
-      `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms/${target}/public`,
+      `http://${import.meta.env.VITE_SERVER_URL}/chatrooms/${target}/public`,
       {
         method: "PATCH",
       },
@@ -127,7 +127,7 @@ export const modChatroom = async (
   else
     res = await fetchWithAuth(
       token,
-      `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms/${target}`,
+      `http://${import.meta.env.VITE_SERVER_URL}/chatrooms/${target}`,
       {
         method: "PATCH",
         body: JSON.stringify({
