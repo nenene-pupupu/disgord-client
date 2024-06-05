@@ -118,6 +118,16 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
     setVideoOn(newSoundOn);
   };
 
+  const getGridTemplate = (numParticipants: number) => {
+    if (numParticipants === 1) return "1fr";
+    if (numParticipants === 2) return "1fr 1fr";
+    if (numParticipants <= 4) return "1fr 1fr";
+    if (numParticipants <= 6) return "1fr 1fr 1fr";
+    return "1fr 1fr 1fr 1fr";
+  };
+
+  const participantsCount = 1 + remoteStreams.length;
+
   return (
     <div className="bg-gray-200 rounded-lg w-full flex flex-col gap-4 p-4">
       <div className="flex flex-row justify-between mt-8 mx-8">
@@ -127,17 +137,22 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
         <div className="flex">
           <div className="flex items-center gap-2 bg-white rounded-full py-2 px-4">
             <IoPerson color="gray" />
-            <p className="text-gray-400">4</p>
+            <p className="text-gray-400">{participantsCount}</p>
           </div>
         </div>
       </div>
       <div className="flex-1 flex justify-center items-center overflow-y-auto">
-        <div className="flex flex-wrap gap-4 overflow-y-auto justify-center">
+        <div
+          className={`grid gap-4 justify-center w-full ${participantsCount === 1 ? "place-items-center" : ""}`}
+          style={{
+            gridTemplateColumns: getGridTemplate(participantsCount),
+          }}
+        >
           <video
             ref={localVideoRef}
             autoPlay
             muted
-            className="h-64 rounded-xl transform scale-x-[-1]"
+            className={`w-full h-full rounded-xl transform scale-x-[-1] object-cover ${participantsCount === 1 ? "w-3/4 h-3/4" : "w-full h-full"}`}
           ></video>
           {remoteStreams.map((_, index) => (
             <video
@@ -146,7 +161,7 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
                 remoteVideoRefs.current[index] = el;
               }}
               autoPlay
-              className="h-64 rounded-xl transform scale-x-[-1]"
+              className="w-full h-full rounded-xl transform scale-x-[-1] object-cover"
             ></video>
           ))}
         </div>
