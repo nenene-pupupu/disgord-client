@@ -7,7 +7,7 @@ This project is a Discord-like application built using vanilla WebSocket for rea
 - Frontend: React, Typescript, Jotai
 - Backend: [Go](https://github.com/nenene-pupupu/disgord-server)
 - WebSocket: Vanilla WebSocket API
-- WebRTC: SimplePeer, PeerJS
+- WebRTC: Vanilla WebRTC API
 - Styling: Tailwind CSS
 - Authentication: JSON Web Tokens (JWT)
 - Build Tools: Vite
