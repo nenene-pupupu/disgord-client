@@ -102,8 +102,6 @@ export const useWebSocket = () => {
       ws.onclose = () => {
         if (curRoomId !== 0) {
           sendMessage({
-            chatroomId: curRoomId,
-            senderId: userId!,
             action: "LEAVE_ROOM",
           });
         }
@@ -173,8 +171,6 @@ export const useWebSocket = () => {
     pc.current.onicecandidate = (event) => {
       if (event.candidate) {
         sendMessage({
-          chatroomId: curRoomId,
-          senderId: userId!,
           action: "CANDIDATE",
           content: JSON.stringify(event.candidate),
         });
@@ -190,8 +186,6 @@ export const useWebSocket = () => {
         prev?.filter((stream) => stream.id !== `remoteStream-${6}`) || [],
     );
     sendMessage({
-      chatroomId: curRoomId,
-      senderId: userId!,
       action: "LEAVE_ROOM",
       content: "",
     });
@@ -228,8 +222,6 @@ export const useWebSocket = () => {
     pc.current.onicecandidate = (event) => {
       if (event.candidate) {
         sendMessage({
-          chatroomId: newRoomId,
-          senderId: userId!,
           action: "CANDIDATE",
           content: JSON.stringify(event.candidate),
         });

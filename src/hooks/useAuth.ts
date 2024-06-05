@@ -17,8 +17,10 @@ export const useAuth = () => {
         token,
         `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/users/me`,
       );
-      const me: User = await res.json();
-      setUserIdState(me.id);
+      if (res && res.ok) {
+        const me: User = await res.json();
+        setUserIdState(me.id);
+      }
     } else {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("userId");
@@ -43,8 +45,10 @@ export const useAuth = () => {
           token,
           `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/users/me`,
         );
-        const me: User = await res.json();
-        setUserIdState(me.id);
+        if (res && res.ok) {
+          const me: User = await res.json();
+          setUserIdState(me.id);
+        }
       })();
     }
   }, [token, userId]);

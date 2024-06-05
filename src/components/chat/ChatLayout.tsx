@@ -6,7 +6,7 @@ import {
   remoteStreamsAtom,
 } from "@/atoms/WebSocketAtom";
 import { SockMessage } from "@/types";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
 import { ImPhoneHangUp } from "react-icons/im";
 import {
@@ -31,7 +31,7 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
   const [soundOn, setSoundOn] = useAtom(soundOnAtom);
 
   const userId = useAtomValue(userIdAtom);
-  const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
+  const setCurRoomId = useSetAtom(curRoomIdAtom);
 
   const localStream = useAtomValue(localStreamAtom);
   const remoteStreams = useAtomValue(remoteStreamsAtom);
@@ -66,8 +66,6 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
     if (!userId) return;
 
     sendMessage({
-      chatroomId: curRoomId,
-      senderId: userId,
       action: "LEAVE_ROOM",
       content: "",
     });
@@ -81,8 +79,6 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
 
   const sendActionMessage = (action: string) => {
     sendMessage({
-      chatroomId: curRoomId,
-      senderId: userId!,
       action,
     });
   };

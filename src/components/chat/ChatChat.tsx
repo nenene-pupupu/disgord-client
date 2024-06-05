@@ -73,8 +73,6 @@ const ChatChat = ({ sendMessage }: WebSocketProps) => {
 
     try {
       sendMessage({
-        chatroomId: curRoomId,
-        senderId: userId,
         action: "SEND_TEXT",
         content: messageContent,
       });
