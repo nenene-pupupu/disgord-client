@@ -33,15 +33,11 @@ const ChatParticipants = () => {
                   <div className="flex-1">
                     <p>{v.displayName}</p>
                   </div>
-                  {v.muted ? (
-                    <IoMicOff color="gray" className="cursor-pointer" />
-                  ) : (
-                    <IoMic color="gray" className="cursor-pointer" />
-                  )}
+                  {v.muted ? <IoMicOff color="gray" /> : <IoMic color="gray" />}
                   {v.camOn ? (
-                    <IoVideocam color="gray" className="cursor-pointer" />
+                    <IoVideocam color="gray" />
                   ) : (
-                    <IoVideocamOff color="gray" className="cursor-pointer" />
+                    <IoVideocamOff color="gray" />
                   )}
                 </div>
               ))}

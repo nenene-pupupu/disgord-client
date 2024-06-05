@@ -46,8 +46,16 @@ export const useWebSocket = () => {
 
           case "LIST_USERS": {
             if (message.content) {
-              const users: SockClient[] = JSON.parse(message.content);
-              setParticipants(users);
+              let parsedUsers: SockClient[] = JSON.parse(message.content);
+              const currentUserIndex = parsedUsers.findIndex(
+                (user) => user.userId === userId,
+              );
+
+              if (currentUserIndex !== -1) {
+                const [currentUser] = parsedUsers.splice(currentUserIndex, 1);
+                parsedUsers = [currentUser, ...parsedUsers];
+              }
+              setParticipants(parsedUsers);
             }
             break;
           }

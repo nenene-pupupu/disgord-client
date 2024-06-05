@@ -3,4 +3,5 @@ export interface SockClient {
   profileColorIndex: number;
   camOn: boolean;
   muted: boolean;
+  userId: number;
 }
