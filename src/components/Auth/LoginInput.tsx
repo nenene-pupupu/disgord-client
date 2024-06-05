@@ -33,7 +33,7 @@ const LoginInput = () => {
   };
 
   const handleOpen = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    e.preventDefault(); // 기본 동작을 막기 위해 이벤트를 막음
+    e.preventDefault();
     setOpen(true);
   };
   const handleClose = () => setOpen(false);

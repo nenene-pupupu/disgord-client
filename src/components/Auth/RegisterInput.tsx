@@ -1,6 +1,6 @@
 import { IconSky } from "@/assets/svg";
 import { signup } from "@/services/authService";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const RegisterInput = () => {
@@ -9,22 +9,45 @@ const RegisterInput = () => {
   const displayname = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
+  const [usernameError, setUsernameError] = useState("");
+  const [displaynameError, setDisplaynameError] = useState("");
+
+  const handleUsernameChange = () => {
+    const value = username.current?.value || "";
+    if (!value.match(/^[a-zA-Z0-9]{1,10}$/)) {
+      setUsernameError(
+        "Username must be alphanumeric and up to 10 characters.",
+      );
+    } else {
+      setUsernameError("");
+    }
+  };
+
+  const handleDisplaynameChange = () => {
+    const value = displayname.current?.value || "";
+    if (value.length > 10) {
+      setDisplaynameError("Display name must be up to 10 characters.");
+    } else {
+      setDisplaynameError("");
+    }
+  };
+
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (
+      !username.current?.value.match(/^[a-zA-Z0-9]{1,10}$/) ||
       password.current?.value === "" ||
-      username.current?.value === "" ||
-      displayname.current?.value === ""
-    )
+      (displayname.current && displayname.current?.value.length > 10)
+    ) {
+      alert("Please enter valid inputs.");
       return;
-
+    }
     try {
       await signup(
         username.current!.value,
         password.current!.value,
-        displayname.current!.value,
+        displayname.current ? displayname.current.value : "",
       );
-      // 단순히 login 으로 이동
       alert("Sign up complete. Please log in!");
       navigate("/login");
     } catch (error) {
@@ -62,8 +85,13 @@ const RegisterInput = () => {
                 type="text"
                 required
                 placeholder="Enter your username"
+                pattern="[a-zA-Z0-9]{1,10}"
+                onChange={handleUsernameChange}
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
               />
+              {usernameError && (
+                <p className="mt-2 text-sm text-red-600">{usernameError}</p>
+              )}
             </div>
           </div>
 
@@ -102,8 +130,12 @@ const RegisterInput = () => {
                 name="displayName"
                 type="text"
                 placeholder="Enter your display name (Optional)"
+                onChange={handleDisplaynameChange}
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-sky-500 text-sm leading-6"
               />
+              {displaynameError && (
+                <p className="mt-2 text-sm text-red-600">{displaynameError}</p>
+              )}
             </div>
           </div>
 
