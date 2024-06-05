@@ -1,4 +1,4 @@
-import { userIdAtom } from "@/atoms/AuthAtom";
+import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
 import { audioOnAtom, soundOnAtom, videoOnAtom } from "@/atoms/ParticipantAtom";
 import {
   curRoomIdAtom,
@@ -6,9 +6,10 @@ import {
   participantsAtom,
   remoteStreamsAtom,
 } from "@/atoms/WebSocketAtom";
+import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { SockMessage } from "@/types";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useEffect, useRef } from "react";
+import { useAtom, useAtomValue } from "jotai";
+import { useEffect, useRef, useState } from "react";
 import { ImPhoneHangUp } from "react-icons/im";
 import {
   IoMic,
@@ -26,14 +27,16 @@ interface WebSocketProps {
 }
 
 const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
+  const [roomName, setRoomName] = useState("");
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const [audioOn, setAudioOn] = useAtom(audioOnAtom);
   const [videoOn, setVideoOn] = useAtom(videoOnAtom);
   const [soundOn, setSoundOn] = useAtom(soundOnAtom);
 
+  const token = useAtomValue(tokenAtom);
   const userId = useAtomValue(userIdAtom);
-  const setCurRoomId = useSetAtom(curRoomIdAtom);
+  const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
   const participants = useAtomValue(participantsAtom);
   const localStream = useAtomValue(localStreamAtom);
   const remoteStreams = useAtomValue(remoteStreamsAtom);
@@ -63,6 +66,19 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
       });
     };
   }, []);
+
+  useEffect(() => {
+    if (!token) return;
+    const getRoomInfo = async () => {
+      const res = await fetchWithAuth(
+        token,
+        `http://${import.meta.env.VITE_SERVER_URL}:${import.meta.env.VITE_SERVER_PORT}/chatrooms/${curRoomId}`,
+      );
+      const data = await res?.json();
+      setRoomName(data.name);
+    };
+    getRoomInfo();
+  }, [curRoomId]);
 
   useEffect(() => {
     if (localStream) {
@@ -139,7 +155,7 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
     <div className="bg-gray-200 rounded-lg w-full flex flex-col gap-4 p-4">
       <div className="flex flex-row justify-between mt-8 mx-8">
         <div className="flex items-center">
-          <h1 className="font-semibold text-2xl">디스고드 만들기#1</h1>
+          <h1 className="font-semibold text-2xl">{roomName}</h1>
         </div>
         <div className="flex">
           <div className="flex items-center gap-2 bg-white rounded-full py-2 px-4">
@@ -150,7 +166,7 @@ const ChatLayout = ({ sendMessage, endCall }: WebSocketProps) => {
       </div>
       <div className="flex-1 flex justify-center items-center overflow-y-auto">
         <div
-          className={`grid gap-4 justify-center w-full ${
+          className={`grid gap-4 justify-center w-full px-8 ${
             participantsCount === 1 ? "place-items-center" : ""
           }`}
           style={{
