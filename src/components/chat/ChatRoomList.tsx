@@ -1,6 +1,10 @@
 import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
 import { audioOnAtom, videoOnAtom } from "@/atoms/ParticipantAtom";
-import { curRoomIdAtom, targetRoomIdAtom } from "@/atoms/WebSocketAtom";
+import {
+  chatroomsAtom,
+  curRoomIdAtom,
+  targetRoomIdAtom,
+} from "@/atoms/WebSocketAtom";
 import { fetchWithAuth } from "@/services/fetchWithAuth";
 import { Chatroom } from "@/types";
 import Modal from "@components/common/Modal";
@@ -17,14 +21,12 @@ const API_URL = `http://${import.meta.env.VITE_SERVER_URL}`;
 interface WebSocketProps {
   startCall: () => void;
   changeRoom: (newRoomId: number) => void;
-  chatrooms: Chatroom[] | null;
   handleModifyOpen: (open: boolean, type: string, chatRoom: Chatroom) => void;
 }
 
 const ChatRoomList = ({
   changeRoom,
   startCall,
-  chatrooms,
   handleModifyOpen,
 }: WebSocketProps) => {
   const [open, setOpen] = useState(false);
@@ -33,6 +35,7 @@ const ChatRoomList = ({
 
   const token = useAtomValue(tokenAtom);
   const userId = useAtomValue(userIdAtom);
+  const chatrooms = useAtomValue(chatroomsAtom);
 
   const [curRoomId, setCurRoomId] = useAtom(curRoomIdAtom);
   const [targetRoomId, setTargetRoomId] = useAtom(targetRoomIdAtom);

@@ -1,6 +1,7 @@
 import { tokenAtom, userIdAtom } from "@/atoms/AuthAtom";
 import { audioOnAtom } from "@/atoms/ParticipantAtom";
 import {
+  chatroomsAtom,
   curRoomIdAtom,
   localStreamAtom,
   messagesAtom,
@@ -8,7 +9,8 @@ import {
   remoteStreamsAtom,
   socketAtom,
 } from "@/atoms/WebSocketAtom";
-import { SockClient, SockMessage } from "@/types";
+import { getChatrooms } from "@/services/chatService";
+import { Chatroom, SockClient, SockMessage } from "@/types";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef } from "react";
 
@@ -24,6 +26,7 @@ export const useWebSocket = () => {
   const pc = useRef<RTCPeerConnection | null>(null);
   const [localStream, setLocalStream] = useAtom(localStreamAtom);
   const setRemoteStreams = useSetAtom(remoteStreamsAtom);
+  const setChatrooms = useSetAtom(chatroomsAtom);
   const audioOn = useAtomValue(audioOnAtom);
 
   useEffect(() => {
@@ -59,6 +62,15 @@ export const useWebSocket = () => {
             }
             break;
           }
+
+          case "ROOM_LIST_UPDATED":
+            try {
+              const res: Chatroom[] = await getChatrooms();
+              setChatrooms(res);
+            } catch (error) {
+              alert((error as Error).message);
+            }
+            break;
 
           case "KICKED":
             alert("Chatroom has been deleted");

@@ -1,5 +1,5 @@
 import { tokenAtom } from "@/atoms/AuthAtom";
-import { targetRoomIdAtom } from "@/atoms/WebSocketAtom";
+import { chatroomsAtom, targetRoomIdAtom } from "@/atoms/WebSocketAtom";
 import {
   addChatroom,
   delChatroom,
@@ -9,11 +9,11 @@ import {
 import { Chatroom } from "@/types";
 import Modal from "@components/common/Modal";
 import Tooltip from "@components/common/Tooltip";
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { IoAdd } from "react-icons/io5";
-import ChatRoomList from "./ChatRoomList";
 import { useNavigate } from "react-router-dom";
+import ChatRoomList from "./ChatRoomList";
 
 interface WebSocketProps {
   startCall: () => void;
@@ -25,7 +25,7 @@ const ChatSideLayout = ({ changeRoom, startCall }: WebSocketProps) => {
   const [type, setType] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [chatrooms, setChatrooms] = useState<Chatroom[] | null>(null);
+  const setChatrooms = useSetAtom(chatroomsAtom);
   const token = useAtomValue(tokenAtom);
   const targetRoomId = useAtomValue(targetRoomIdAtom);
   const navigator = useNavigate();
@@ -56,7 +56,6 @@ const ChatSideLayout = ({ changeRoom, startCall }: WebSocketProps) => {
     }
     try {
       await addChatroom(token, name, password);
-      fetchChatrooms();
     } catch (error) {
       alert((error as Error).message);
     }
@@ -201,7 +200,6 @@ const ChatSideLayout = ({ changeRoom, startCall }: WebSocketProps) => {
       <ChatRoomList
         startCall={startCall}
         changeRoom={changeRoom}
-        chatrooms={chatrooms}
         handleModifyOpen={handleModifyOpen}
       />
     </div>

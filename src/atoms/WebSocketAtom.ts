@@ -1,7 +1,9 @@
-import { SockClient, SockMessage } from "@/types";
+import { Chatroom, SockClient, SockMessage } from "@/types";
 import { atom } from "jotai";
 
 export const curRoomIdAtom = atom<number>(0);
+
+export const chatroomsAtom = atom<Chatroom[] | null>(null);
 
 export const targetRoomIdAtom = atom<number>(0);
 
