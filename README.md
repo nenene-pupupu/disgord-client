@@ -21,6 +21,8 @@ Before starting frontend,clone and start the backend server:
 ```bash
 git clone https://github.com/nenene-pupupu/disgord-server.git
 cd disgord-server
+go run keygen.go
+go generate ./...
 go run main.go
 ```
 
